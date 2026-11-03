@@ -55,4 +55,4 @@ Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne O
 
 ## Ostatni status
 
-**2026-11-03:** Przeniesiono logo firmy do `public/cm_logo.png` i zaktualizowano kartę logowania (`app/login/page.tsx`) z dwuwierszowym nagłówkiem „CerMotor / Wnioski urlopowe", bez przełącznika motywu i starej ikony. Ekran logowania jest gotowy do wysłania na repozytorium i automatycznego wdrożenia na Vercel. Następny krok to przejście ścieżki akceptacji wniosków na żywych kontach produkcyjnych.
+**2026-11-03:** W planie wdrożenia odnotowano, że Etap 1 jest wykonany, łącznie z migracją uruchomioną w Supabase. Kod jest na gałęzi `main` lokalnie i wejdzie na produkcję po pushu na GitHub. Następny krok to osobne polecenie „Wdróż Etap 2 z planu".

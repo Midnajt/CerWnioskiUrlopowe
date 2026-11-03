@@ -1,4 +1,6 @@
-export type LeaveType = "current" | "overdue";
+export type LeavePool = "current" | "overdue";
+
+export type LeaveType = LeavePool | "on_demand" | "saturday_comp";
 
 export type LeaveStatus =
   | "roboczy"
@@ -23,7 +25,7 @@ export const HOLDING_STATUSES: LeaveStatus[] = [
 ];
 
 export function isLeaveType(value: string): value is LeaveType {
-  return value === "current" || value === "overdue";
+  return value === "current" || value === "overdue" || value === "on_demand" || value === "saturday_comp";
 }
 
 export function isHoldingStatus(status: string): boolean {

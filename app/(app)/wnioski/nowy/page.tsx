@@ -2,6 +2,7 @@ import { LeaveForm } from "@/components/LeaveForm";
 import { CardHeading } from "@/components/glyphs";
 import { Card, Muted } from "@/components/ui";
 import { requireEmployee } from "@/lib/auth/session";
+import { todayInWarsaw } from "@/lib/leave/dates";
 import { loadFormContext } from "@/lib/leave/views";
 
 export default async function NewLeavePage() {
@@ -15,7 +16,17 @@ export default async function NewLeavePage() {
         holidays={context.holidays}
         summary={context.summary}
         colleagues={context.colleagues}
-        initial={{ leaveType: "current", dateFrom: "", dateTo: "", substituteId: "" }}
+        today={todayInWarsaw()}
+        initial={{
+          leaveType: "current",
+          dateFrom: "",
+          dateTo: "",
+          substituteId: "",
+          fullDay: true,
+          timeFrom: "",
+          timeTo: "",
+          workedDate: "",
+        }}
       />
     </Card>
   );

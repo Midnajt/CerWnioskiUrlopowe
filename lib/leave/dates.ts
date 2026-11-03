@@ -39,6 +39,39 @@ export function requiresDirector(calendarDays: number): boolean {
   return calendarDays > 21;
 }
 
+const TIME_OF_DAY = /^([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d)?$/;
+
+/** Zostawia GG:MM. Sekundy z pola type=time są obcinane. */
+export function normalizeTime(value: string): string | null {
+  const match = TIME_OF_DAY.exec(value);
+  if (!match) return null;
+  return `${match[1]}:${match[2]}`;
+}
+
+/**
+ * Godziny między dwiema porami. Null, gdy format nie jest GG:MM,
+ * koniec nie jest późniejszy albo minuty nie są wielokrotnością 15.
+ */
+export function calculateHours(timeFrom: string, timeTo: string): number | null {
+  const from = TIME_OF_DAY.exec(timeFrom);
+  const to = TIME_OF_DAY.exec(timeTo);
+  if (!from || !to) return null;
+  const fromMinutes = Number(from[1]) * 60 + Number(from[2]);
+  const toMinutes = Number(to[1]) * 60 + Number(to[2]);
+  if (toMinutes <= fromMinutes) return null;
+  if (fromMinutes % 15 !== 0 || toMinutes % 15 !== 0) return null;
+  return (toMinutes - fromMinutes) / 60;
+}
+
+/** Sobota, niedziela albo święto. Fałsz także dla nieprawidłowej daty. */
+export function isNonWorkingDay(iso: string, holidays: Iterable<string>): boolean {
+  const date = parseIsoDate(iso);
+  if (!date) return false;
+  const weekday = date.getUTCDay();
+  if (weekday === 0 || weekday === 6) return true;
+  return new Set(holidays).has(iso);
+}
+
 /** Dni robocze: bez sobót, niedziel i dat ze zbioru świąt (YYYY-MM-DD). */
 export function countWorkingDays(
   from: string,

@@ -10,7 +10,20 @@ export function parseLeaveBody(value: unknown): LeaveBody | null {
   const dateTo = typeof body.dateTo === "string" ? body.dateTo : "";
   const substituteId =
     typeof body.substituteId === "string" && body.substituteId.length > 0 ? body.substituteId : null;
-  return { leaveType, dateFrom, dateTo, substituteId, submit: body.submit === true };
+  const workedDate = typeof body.workedDate === "string" && body.workedDate.length > 0 ? body.workedDate : null;
+  const timeFrom = typeof body.timeFrom === "string" && body.timeFrom.length > 0 ? body.timeFrom : null;
+  const timeTo = typeof body.timeTo === "string" && body.timeTo.length > 0 ? body.timeTo : null;
+  return {
+    leaveType,
+    dateFrom,
+    dateTo,
+    substituteId,
+    submit: body.submit === true,
+    workedDate,
+    fullDay: body.fullDay !== false,
+    timeFrom,
+    timeTo,
+  };
 }
 
 export async function POST(request: Request) {

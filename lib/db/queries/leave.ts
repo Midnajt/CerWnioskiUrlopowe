@@ -1,7 +1,7 @@
 import "server-only";
 import { dbError, getDb } from "@/lib/db/client";
 import type { BalanceRow, HoldingRow } from "@/lib/leave/limits";
-import type { LeaveStatus, LeaveType } from "@/lib/leave/workflow";
+import type { LeavePool, LeaveStatus, LeaveType } from "@/lib/leave/workflow";
 import type { LeaveEvent, LeaveRequest } from "@/lib/types";
 
 type RequestRow = {
@@ -15,6 +15,11 @@ type RequestRow = {
   working_days: number;
   calendar_days: number;
   requires_director: boolean;
+  worked_date: string | null;
+  full_day: boolean;
+  time_from: string | null;
+  time_to: string | null;
+  planned_hours: number | string;
   substitute_employee_id: string | null;
   manager_assignee_id: string | null;
   director_assignee_id: string | null;
@@ -24,7 +29,7 @@ type RequestRow = {
 };
 
 const REQUEST_COLUMNS =
-  "id, request_number, employee_id, leave_type, status, date_from, date_to, working_days, calendar_days, requires_director, substitute_employee_id, manager_assignee_id, director_assignee_id, submitted_at, created_at, updated_at";
+  "id, request_number, employee_id, leave_type, status, date_from, date_to, working_days, calendar_days, requires_director, worked_date, full_day, time_from, time_to, planned_hours, substitute_employee_id, manager_assignee_id, director_assignee_id, submitted_at, created_at, updated_at";
 
 function mapRequest(row: RequestRow): LeaveRequest {
   return {
@@ -38,6 +43,11 @@ function mapRequest(row: RequestRow): LeaveRequest {
     workingDays: row.working_days,
     calendarDays: row.calendar_days,
     requiresDirector: row.requires_director,
+    workedDate: row.worked_date,
+    fullDay: row.full_day,
+    timeFrom: row.time_from,
+    timeTo: row.time_to,
+    plannedHours: Number(row.planned_hours),
     substituteEmployeeId: row.substitute_employee_id,
     managerAssigneeId: row.manager_assignee_id,
     directorAssigneeId: row.director_assignee_id,
@@ -62,7 +72,7 @@ export async function listBalances(employeeId: string): Promise<BalanceRow[]> {
   if (error) throw dbError(error);
   return (data ?? []).map((row) => ({
     year: row.year as number,
-    pool: row.pool as LeaveType,
+    pool: row.pool as LeavePool,
     entitled: row.entitled_days as number,
     used: row.used_days as number,
   }));
@@ -76,7 +86,7 @@ export async function listAllBalances(): Promise<(BalanceRow & { employeeId: str
   return (data ?? []).map((row) => ({
     employeeId: row.employee_id as string,
     year: row.year as number,
-    pool: row.pool as LeaveType,
+    pool: row.pool as LeavePool,
     entitled: row.entitled_days as number,
     used: row.used_days as number,
   }));
@@ -109,6 +119,8 @@ function toHolding(row: RequestRow, allocations: { year: number; days: number }[
     dateFrom: row.date_from,
     dateTo: row.date_to,
     workingDays: row.working_days,
+    fullDay: row.full_day,
+    plannedHours: Number(row.planned_hours),
     allocations,
   };
 }
@@ -152,6 +164,11 @@ export type NewRequest = {
   workingDays: number;
   calendarDays: number;
   requiresDirector: boolean;
+  workedDate: string | null;
+  fullDay: boolean;
+  timeFrom: string | null;
+  timeTo: string | null;
+  plannedHours: number;
   substituteEmployeeId: string | null;
   managerAssigneeId: string | null;
   directorAssigneeId: string | null;
@@ -171,6 +188,11 @@ export async function insertRequest(input: NewRequest): Promise<LeaveRequest> {
       working_days: input.workingDays,
       calendar_days: input.calendarDays,
       requires_director: input.requiresDirector,
+      worked_date: input.workedDate,
+      full_day: input.fullDay,
+      time_from: input.timeFrom,
+      time_to: input.timeTo,
+      planned_hours: input.plannedHours,
       substitute_employee_id: input.substituteEmployeeId,
       manager_assignee_id: input.managerAssigneeId,
       director_assignee_id: input.directorAssigneeId,
@@ -190,6 +212,11 @@ export type RequestPatch = {
   workingDays: number;
   calendarDays: number;
   requiresDirector: boolean;
+  workedDate: string | null;
+  fullDay: boolean;
+  timeFrom: string | null;
+  timeTo: string | null;
+  plannedHours: number;
   substituteEmployeeId: string | null;
   managerAssigneeId: string | null;
   directorAssigneeId: string | null;
@@ -207,6 +234,11 @@ export async function updateRequest(id: string, patch: RequestPatch): Promise<Le
       working_days: patch.workingDays,
       calendar_days: patch.calendarDays,
       requires_director: patch.requiresDirector,
+      worked_date: patch.workedDate,
+      full_day: patch.fullDay,
+      time_from: patch.timeFrom,
+      time_to: patch.timeTo,
+      planned_hours: patch.plannedHours,
       substitute_employee_id: patch.substituteEmployeeId,
       manager_assignee_id: patch.managerAssigneeId,
       director_assignee_id: patch.directorAssigneeId,

@@ -3,8 +3,8 @@
 Postgres w Supabase, region EU. Opis jest źródłem kolumn dla `lib/db/` i `supabase/migrations/`.
 Klucz secret omija RLS. Polityk dla klucza anon nie ma: przeglądarka nie czyta tych tabel.
 
-Dni urlopu są całkowite. Wymiar etatu jest zapisany i nie przelicza limitu.
 Pula `current` to urlop bieżący danego roku. Pula `overdue` to urlop zaległy z roku `year`.
+Cały dzień schodzi z puli jako jeden dzień roboczy. Niepełny dzień schodzi z puli bieżącej i z limitu na żądanie ułamkiem `planned_hours / 8`. Urlop zaległy jest tylko w pełnych dniach. Odbiór za sobotę nie schodzi z puli. Wymiar etatu jest zapisany i nie przelicza limitu.
 
 ## departments
 
@@ -82,13 +82,18 @@ Nowe wnioski w tym terminie dostają zastępcę jako adresata etapu. Jeden przes
 | id | uuid | PK |
 | request_number | text | unikalny, z funkcji `next_leave_number()` |
 | employee_id | uuid | FK → employees, wnioskujący |
-| leave_type | text | `current` albo `overdue` |
+| leave_type | text | `current`, `overdue`, `on_demand`, `saturday_comp` |
 | status | text | statusy poniżej |
-| date_from | date | |
+| date_from | date | dla `saturday_comp` proponowany dzień wolny |
 | date_to | date | nie wcześniej niż `date_from` |
 | working_days | int | dni robocze |
 | calendar_days | int | dni kalendarzowe łącznie z końcami |
 | requires_director | boolean | `calendar_days > 21` |
+| worked_date | date | dzień przepracowany, tylko `saturday_comp`, poza terminem odbioru |
+| full_day | boolean | `false` oznacza jeden dzień roboczy w godzinach |
+| time_from | text | `HH:MM`, tylko gdy `full_day = false` |
+| time_to | text | `HH:MM`, później niż `time_from`, krok 15 minut |
+| planned_hours | numeric(5,2) | cały dzień: `working_days * 8`; niepełny: różnica godzin, do 8 |
 | substitute_employee_id | uuid | FK → employees, null w roboczym |
 | manager_assignee_id | uuid | adresat etapu przełożonego |
 | director_assignee_id | uuid | adresat etapu dyrektora |
@@ -99,6 +104,8 @@ Nowe wnioski w tym terminie dostają zastępcę jako adresata etapu. Jeden przes
 Statusy: `roboczy`, `oczekuje_przelozonego`, `oczekuje_dyrektora`, `oczekuje_kadr`, `zaakceptowany`, `odrzucony`, `cofniety_pracownik`, `wycofany`.
 
 Wniosek w statusie oczekującym albo `zaakceptowany` zajmuje limit i blokuje zastępstwo. `zaakceptowany` z `date_to` wcześniejszym niż dziś liczy się jako wykorzystany, pozostałe jako zaplanowane.
+
+`on_demand` zajmuje pulę `current` roku rozpoczęcia i osobny podlimit 4 dni w tym roku. `saturday_comp` nie zajmuje puli wypoczynkowej. Przy niepełnym dniu do puli wchodzi `planned_hours / 8` zamiast całego `working_days`.
 
 ## leave_allocations
 

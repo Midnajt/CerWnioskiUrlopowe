@@ -3,11 +3,15 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Glyph } from "@/components/glyphs";
-import { Button, FormRow, Input, Notice, Readonly, RowActions, Select } from "@/components/ui";
-import { calendarDaysInclusive, countWorkingDays, formatPlDate } from "@/lib/leave/dates";
-import { fullName, TYPE_LABEL } from "@/lib/leave/labels";
-import { LIMIT_BLOCK_MESSAGE, type BalanceSummary } from "@/lib/leave/limits";
-import { requiresDirector } from "@/lib/leave/dates";
+import { Button, Check, FormRow, Input, Notice, Readonly, RowActions, Select } from "@/components/ui";
+import { calculateHours, calendarDaysInclusive, countWorkingDays, formatPlDate, isNonWorkingDay, requiresDirector } from "@/lib/leave/dates";
+import { formatAmount, fullName, TYPE_LABEL } from "@/lib/leave/labels";
+import {
+  LIMIT_BLOCK_MESSAGE,
+  ON_DEMAND_LIMIT_BLOCK_MESSAGE,
+  SHORT_NOTICE_WARNING,
+  type BalanceSummary,
+} from "@/lib/leave/limits";
 import type { LeaveType } from "@/lib/leave/workflow";
 import type { Employee } from "@/lib/types";
 
@@ -16,28 +20,69 @@ type Props = {
   holidays: string[];
   summary: BalanceSummary;
   colleagues: Employee[];
+  today: string;
   initial: {
     leaveType: LeaveType;
     dateFrom: string;
     dateTo: string;
     substituteId: string;
+    fullDay: boolean;
+    timeFrom: string;
+    timeTo: string;
+    workedDate: string;
   };
 };
 
-export function LeaveForm({ requestId, holidays, summary, colleagues, initial }: Props) {
+export function LeaveForm({ requestId, holidays, summary, colleagues, today, initial }: Props) {
   const router = useRouter();
   const [leaveType, setLeaveType] = useState<LeaveType>(initial.leaveType);
   const [dateFrom, setDateFrom] = useState(initial.dateFrom);
   const [dateTo, setDateTo] = useState(initial.dateTo);
   const [substituteId, setSubstituteId] = useState(initial.substituteId);
+  const [fullDay, setFullDay] = useState(initial.fullDay);
+  const [timeFrom, setTimeFrom] = useState(initial.timeFrom);
+  const [timeTo, setTimeTo] = useState(initial.timeTo);
+  const [workedDate, setWorkedDate] = useState(initial.workedDate);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
+  const singleDay = !fullDay || leaveType === "saturday_comp";
   const calendarDays = calendarDaysInclusive(dateFrom, dateTo);
   const workingDays = calendarDays === null ? null : countWorkingDays(dateFrom, dateTo, holidays);
   const director = calendarDays !== null && requiresDirector(calendarDays);
-  const remaining = leaveType === "current" ? (summary.current?.remaining ?? 0) : summary.overdueRemaining;
-  const overLimit = workingDays !== null && workingDays > remaining;
+  const partialHours = calculateHours(timeFrom, timeTo);
+  const plannedHours = fullDay ? (workingDays === null ? null : workingDays * 8) : partialHours;
+  const charged = fullDay ? workingDays : plannedHours === null ? null : plannedHours / 8;
+  const overLimit =
+    leaveType === "saturday_comp"
+      ? false
+      : leaveType === "on_demand"
+        ? charged !== null && charged > summary.onDemand.remaining
+        : leaveType === "overdue"
+          ? workingDays !== null && workingDays > summary.overdueRemaining
+          : charged !== null && charged > (summary.current?.remaining ?? 0);
+  const shortNotice = leaveType !== "on_demand" && dateFrom.length > 0 && dateFrom <= today;
+  const workedOnWorkingDay =
+    leaveType === "saturday_comp" && workedDate.length > 0 && !isNonWorkingDay(workedDate, holidays);
+  const blockMessage = leaveType === "on_demand" ? ON_DEMAND_LIMIT_BLOCK_MESSAGE : LIMIT_BLOCK_MESSAGE;
+
+  function handleType(value: LeaveType) {
+    setLeaveType(value);
+    if (value === "overdue") setFullDay(true);
+    if (value !== "saturday_comp") setWorkedDate("");
+    if (value === "saturday_comp" || !fullDay) setDateTo(dateFrom);
+  }
+
+  function handleFullDay(checked: boolean) {
+    if (leaveType === "overdue") return;
+    setFullDay(checked);
+    if (!checked) setDateTo(dateFrom);
+  }
+
+  function handleStart(value: string) {
+    setDateFrom(value);
+    if (singleDay) setDateTo(value);
+  }
 
   async function handleSave(submit: boolean) {
     setPending(true);
@@ -48,9 +93,13 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, initial }:
       body: JSON.stringify({
         leaveType,
         dateFrom,
-        dateTo,
+        dateTo: singleDay ? dateFrom : dateTo,
         substituteId: substituteId || null,
         submit,
+        fullDay,
+        timeFrom: fullDay ? null : timeFrom || null,
+        timeTo: fullDay ? null : timeTo || null,
+        workedDate: leaveType === "saturday_comp" ? workedDate || null : null,
       }),
     });
     const payload = (await response.json().catch(() => null)) as { error?: string; id?: string } | null;
@@ -63,49 +112,81 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, initial }:
     router.refresh();
   }
 
+  const hoursLabel =
+    plannedHours === null ? "Wybierz termin" : `${formatAmount(plannedHours)} h`;
+
   return (
     <div>
       {error ? <Notice $tone="danger">{error}</Notice> : null}
-      {overLimit ? <Notice $tone="danger">{LIMIT_BLOCK_MESSAGE}</Notice> : null}
+      {overLimit ? <Notice $tone="danger">{blockMessage}</Notice> : null}
+      {shortNotice ? <Notice>{SHORT_NOTICE_WARNING}</Notice> : null}
+      {workedOnWorkingDay ? (
+        <Notice $tone="danger">Dzień pracy musi przypadać w sobotę, niedzielę albo święto.</Notice>
+      ) : null}
       {director ? (
         <Notice>Ten wniosek przekracza 3 tygodnie. Po akceptacji przełożonego trafi do dyrektora.</Notice>
       ) : null}
       <FormRow>
         Rodzaj urlopu *
-        <Select value={leaveType} onChange={(event) => setLeaveType(event.target.value as LeaveType)}>
+        <Select value={leaveType} onChange={(event) => handleType(event.target.value as LeaveType)}>
           <option value="current">{TYPE_LABEL.current}</option>
           <option value="overdue">{TYPE_LABEL.overdue}</option>
+          <option value="on_demand">{TYPE_LABEL.on_demand}</option>
+          <option value="saturday_comp">{TYPE_LABEL.saturday_comp}</option>
         </Select>
       </FormRow>
       <FormRow>
         Dostępny limit
-        <Readonly>
-          {leaveType === "current"
-            ? summary.current
-              ? `${summary.current.remaining} dni z ${summary.current.entitled} (wykorzystano ${summary.current.used}, zaplanowano ${summary.current.planned})`
-              : "Brak puli bieżącej na ten rok."
-            : summary.overdueYears.length === 0
-              ? "Brak urlopu zaległego."
-              : summary.overdueYears
-                  .map((year) => `${year.year}: ${year.remaining} dni`)
-                  .join(", ") + ` — razem ${summary.overdueRemaining} dni. System zużyje najstarszy rok.`}
-        </Readonly>
+        <Readonly>{limitText(leaveType, summary)}</Readonly>
       </FormRow>
+      {leaveType === "saturday_comp" ? (
+        <FormRow>
+          Dzień, w którym wykonywano pracę *
+          <Input type="date" value={workedDate} onChange={(event) => setWorkedDate(event.target.value)} required />
+        </FormRow>
+      ) : null}
       <FormRow>
-        Planowany urlop od *
-        <Input type="date" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} required />
+        {singleDay ? (leaveType === "saturday_comp" ? "Proponowany dzień wolny *" : "Data *") : "Planowany urlop od *"}
+        <Input type="date" value={dateFrom} onChange={(event) => handleStart(event.target.value)} required />
       </FormRow>
-      <FormRow>
-        Planowany urlop do *
-        <Input type="date" value={dateTo} onChange={(event) => setDateTo(event.target.value)} required />
-      </FormRow>
+      {singleDay ? null : (
+        <FormRow>
+          Planowany urlop do *
+          <Input type="date" value={dateTo} onChange={(event) => setDateTo(event.target.value)} required />
+        </FormRow>
+      )}
       <FormRow>
         Liczba dni urlopu
         <Readonly>
           {workingDays === null || calendarDays === null
             ? "Wybierz termin"
-            : `${formatPlDate(dateFrom)} – ${formatPlDate(dateTo)}: ${workingDays} dni roboczych (${calendarDays} kalendarzowych)`}
+            : `${formatPlDate(dateFrom)} – ${formatPlDate(singleDay ? dateFrom : dateTo)}: ${workingDays} dni roboczych (${calendarDays} kalendarzowych)`}
         </Readonly>
+      </FormRow>
+      <FormRow>
+        Cały dzień
+        <Check
+          type="checkbox"
+          checked={fullDay}
+          disabled={leaveType === "overdue"}
+          onChange={(event) => handleFullDay(event.target.checked)}
+        />
+      </FormRow>
+      {fullDay ? null : (
+        <>
+          <FormRow>
+            Godzina od *
+            <Input type="time" step={900} value={timeFrom} onChange={(event) => setTimeFrom(event.target.value)} required />
+          </FormRow>
+          <FormRow>
+            Godzina do *
+            <Input type="time" step={900} value={timeTo} onChange={(event) => setTimeTo(event.target.value)} required />
+          </FormRow>
+        </>
+      )}
+      <FormRow>
+        Planowany czas urlopu w godzinach
+        <Readonly>{hoursLabel}</Readonly>
       </FormRow>
       <FormRow>
         Zastępca *
@@ -119,7 +200,19 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, initial }:
         </Select>
       </FormRow>
       <RowActions>
-        <Button type="button" $tone="ok" disabled={pending || overLimit || !workingDays} onClick={() => handleSave(true)}>
+        <Button
+          type="button"
+          $tone="ok"
+          disabled={
+            pending ||
+            overLimit ||
+            !workingDays ||
+            (leaveType === "saturday_comp" && workedDate.length === 0) ||
+            workedOnWorkingDay ||
+            (!fullDay && (plannedHours === null || plannedHours > 8))
+          }
+          onClick={() => handleSave(true)}
+        >
           <Glyph name="send" />
           Przekaż do akceptacji
         </Button>
@@ -134,4 +227,22 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, initial }:
       </RowActions>
     </div>
   );
+}
+
+function limitText(leaveType: LeaveType, summary: BalanceSummary): string {
+  if (leaveType === "on_demand") {
+    const currentLeft = summary.current ? formatAmount(summary.current.remaining) : "0";
+    return `Pozostało ${formatAmount(summary.onDemand.remaining)} z ${summary.onDemand.entitled} dni na żądanie. Schodzi z urlopu bieżącego, którego zostało ${currentLeft} dni. Można go złożyć w dniu rozpoczęcia.`;
+  }
+  if (leaveType === "saturday_comp") {
+    return "Odbiór dnia wolnego nie pomniejsza puli urlopu wypoczynkowego.";
+  }
+  if (leaveType === "current") {
+    return summary.current
+      ? `${formatAmount(summary.current.remaining)} dni z ${formatAmount(summary.current.entitled)} (wykorzystano ${formatAmount(summary.current.used)}, zaplanowano ${formatAmount(summary.current.planned)})`
+      : "Brak puli bieżącej na ten rok.";
+  }
+  if (summary.overdueYears.length === 0) return "Brak urlopu zaległego.";
+  const years = summary.overdueYears.map((year) => `${year.year}: ${formatAmount(year.remaining)} dni`).join(", ");
+  return `${years} — razem ${formatAmount(summary.overdueRemaining)} dni. System zużyje najstarszy rok.`;
 }

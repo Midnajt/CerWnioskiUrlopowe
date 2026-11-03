@@ -289,6 +289,8 @@ async function main(): Promise<void> {
         working_days: workingDays,
         calendar_days: calendarDays,
         requires_director: requiresDirector(calendarDays),
+        full_day: true,
+        planned_hours: workingDays * 8,
         substitute_employee_id: annaId,
         manager_assignee_id: robertId,
         submitted_at: new Date().toISOString(),

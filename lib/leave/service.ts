@@ -18,8 +18,12 @@ import {
   updateRequestStatus,
 } from "@/lib/db";
 import {
+  calculateHours,
   calendarDaysInclusive,
   countWorkingDays,
+  isNonWorkingDay,
+  normalizeTime,
+  parseIsoDate,
   rangesOverlap,
   todayInWarsaw,
   yearOf,
@@ -27,6 +31,7 @@ import {
 import { fullName } from "@/lib/leave/labels";
 import {
   LIMIT_BLOCK_MESSAGE,
+  ON_DEMAND_LIMIT_BLOCK_MESSAGE,
   SUBSTITUTE_BLOCK_MESSAGE,
   allocateOldest,
   summarizeBalances,
@@ -53,9 +58,13 @@ export type LeaveBody = {
   dateTo: string;
   substituteId: string | null;
   submit: boolean;
+  workedDate: string | null;
+  fullDay: boolean;
+  timeFrom: string | null;
+  timeTo: string | null;
 };
 
-function fail(error: string, status: number): ServiceResult<never> {
+function fail(error: string, status: number): { ok: false; error: string; status: number } {
   return { ok: false, error, status };
 }
 
@@ -142,6 +151,32 @@ async function notifyTransition(input: {
   await addNotifications(items);
 }
 
+/**
+ * Cały dzień zamienia dni robocze na godziny po 8.
+ * Niepełny dzień jest jednym dniem roboczym i nie dotyczy urlopu zaległego.
+ */
+function resolveHours(
+  body: LeaveBody,
+  workingDays: number,
+):
+  | { ok: true; fullDay: boolean; timeFrom: string | null; timeTo: string | null; plannedHours: number }
+  | { ok: false; error: string; status: number } {
+  if (body.fullDay) {
+    return { ok: true, fullDay: true, timeFrom: null, timeTo: null, plannedHours: workingDays * 8 };
+  }
+  if (body.leaveType === "overdue") return fail("Urlop zaległy obejmuje całe dni.", 400);
+  if (body.dateFrom !== body.dateTo) return fail("Niepełny dzień dotyczy jednego dnia.", 400);
+  if (workingDays !== 1) return fail("Niepełny dzień musi przypadać w dniu roboczym.", 400);
+  const timeFrom = body.timeFrom ? normalizeTime(body.timeFrom) : null;
+  const timeTo = body.timeTo ? normalizeTime(body.timeTo) : null;
+  const plannedHours = timeFrom && timeTo ? calculateHours(timeFrom, timeTo) : null;
+  if (!timeFrom || !timeTo || plannedHours === null) {
+    return fail("Podaj godziny w formacie GG:MM, w krokach co 15 minut.", 400);
+  }
+  if (plannedHours > 8) return fail("Niepełny dzień może trwać najwyżej 8 godzin.", 400);
+  return { ok: true, fullDay: false, timeFrom, timeTo, plannedHours };
+}
+
 /** Zapis roboczy albo złożenie. Edycja tylko własnego wniosku w statusie roboczym lub cofniętym. */
 export async function saveLeave(
   actor: Employee,
@@ -155,6 +190,22 @@ export async function saveLeave(
     calendarDays === null ? null : countWorkingDays(body.dateFrom, body.dateTo, holidays);
   if (calendarDays === null || workingDays === null) return fail("Podaj prawidłowy termin urlopu.", 400);
   if (body.submit && workingDays === 0) return fail("W wybranym terminie nie ma dni roboczych.", 400);
+
+  const span = resolveHours(body, workingDays);
+  if (!span.ok) return span;
+
+  if (body.leaveType === "saturday_comp") {
+    if (body.dateFrom !== body.dateTo) return fail("Odbiór dnia wolnego dotyczy jednego dnia.", 400);
+    if (!body.workedDate || !parseIsoDate(body.workedDate)) {
+      return fail("Wskaż dzień, w którym wykonywano pracę.", 400);
+    }
+    if (!isNonWorkingDay(body.workedDate, holidays)) {
+      return fail("Dzień pracy musi przypadać w sobotę, niedzielę albo święto.", 400);
+    }
+    if (body.workedDate >= body.dateFrom && body.workedDate <= body.dateTo) {
+      return fail("Dzień pracy nie może pokrywać się z dniem odbioru.", 400);
+    }
+  }
 
   const poolYear = yearOf(body.dateFrom);
   if (!poolYear) return fail("Podaj prawidłowy termin urlopu.", 400);
@@ -178,6 +229,7 @@ export async function saveLeave(
   const holdings = (await listHoldingsForEmployees([actor.id])).filter((row) => row.id !== existing?.id);
   const summary = summarizeBalances(balances, holdings, today, poolYear);
 
+  const daysCharged = span.fullDay ? workingDays : span.plannedHours / 8;
   let allocations: { year: number; days: number }[] = [];
   if (body.leaveType === "overdue") {
     const allocated = allocateOldest(
@@ -186,8 +238,10 @@ export async function saveLeave(
     );
     if (body.submit && !allocated) return fail(LIMIT_BLOCK_MESSAGE, 400);
     allocations = allocated ?? [];
-  } else if (body.submit && workingDays > (summary.current?.remaining ?? 0)) {
+  } else if (body.leaveType === "current" && body.submit && daysCharged > (summary.current?.remaining ?? 0)) {
     return fail(LIMIT_BLOCK_MESSAGE, 400);
+  } else if (body.leaveType === "on_demand" && body.submit && daysCharged > summary.onDemand.remaining) {
+    return fail(ON_DEMAND_LIMIT_BLOCK_MESSAGE, 400);
   }
 
   const directorRequired = calendarDays > 21;
@@ -223,6 +277,11 @@ export async function saveLeave(
     workingDays,
     calendarDays,
     requiresDirector: directorRequired,
+    workedDate: body.leaveType === "saturday_comp" ? body.workedDate : null,
+    fullDay: span.fullDay,
+    timeFrom: span.timeFrom,
+    timeTo: span.timeTo,
+    plannedHours: span.plannedHours,
     substituteEmployeeId: body.substituteId,
     managerAssigneeId,
     directorAssigneeId,

@@ -174,6 +174,12 @@ const field = css`
   padding: 8px 10px;
 `;
 
+export const Check = styled.input`
+  width: 18px;
+  height: 18px;
+  accent-color: ${({ theme }) => theme.colors.green700};
+`;
+
 export const Input = styled.input`
   ${field}
   border: 1.5px solid ${({ theme }) => theme.surface.border};

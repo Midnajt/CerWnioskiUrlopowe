@@ -28,7 +28,7 @@ export type LeaveRequest = {
   id: string;
   requestNumber: string;
   employeeId: string;
-  leaveType: "current" | "overdue";
+  leaveType: "current" | "overdue" | "on_demand" | "saturday_comp";
   status:
     | "roboczy"
     | "oczekuje_przelozonego"
@@ -43,6 +43,11 @@ export type LeaveRequest = {
   workingDays: number;
   calendarDays: number;
   requiresDirector: boolean;
+  workedDate: string | null;
+  fullDay: boolean;
+  timeFrom: string | null;
+  timeTo: string | null;
+  plannedHours: number;
   substituteEmployeeId: string | null;
   managerAssigneeId: string | null;
   directorAssigneeId: string | null;

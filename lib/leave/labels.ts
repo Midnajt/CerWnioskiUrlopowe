@@ -14,7 +14,14 @@ export const STATUS_LABEL: Record<LeaveStatus, string> = {
 export const TYPE_LABEL: Record<LeaveType, string> = {
   current: "Urlop wypoczynkowy — bieżący",
   overdue: "Urlop wypoczynkowy — zaległy",
+  on_demand: "Urlop na żądanie",
+  saturday_comp: "Odbiór dnia wolnego za pracę w sobotę / dzień wolny",
 };
+
+/** Dni i godziny mogą być ułamkiem przy niepełnym dniu. */
+export function formatAmount(value: number): string {
+  return value.toLocaleString("pl-PL", { maximumFractionDigits: 2 });
+}
 
 export const ACTION_LABEL = {
   utworzono: "Utworzono wniosek",

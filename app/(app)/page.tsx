@@ -2,6 +2,7 @@ import { CardHeading } from "@/components/glyphs";
 import { Card, Muted, Notice } from "@/components/ui";
 import { RequestTable } from "@/components/RequestTable";
 import { requireEmployee } from "@/lib/auth/session";
+import { formatAmount } from "@/lib/leave/labels";
 import { loadDashboard } from "@/lib/leave/views";
 
 export default async function DashboardPage() {
@@ -14,8 +15,8 @@ export default async function DashboardPage() {
         <CardHeading name="limits">Moje limity</CardHeading>
         {current ? (
           <p>
-            Urlop bieżący {current.year}: wymiar {current.entitled}, wykorzystano {current.used}, zaplanowano{" "}
-            {current.planned}, pozostało {current.remaining}.
+            Urlop bieżący {current.year}: wymiar {formatAmount(current.entitled)}, wykorzystano {formatAmount(current.used)}, zaplanowano{" "}
+            {formatAmount(current.planned)}, pozostało {formatAmount(current.remaining)}.
           </p>
         ) : (
           <Muted>Brak puli bieżącej na ten rok.</Muted>
@@ -26,12 +27,17 @@ export default async function DashboardPage() {
           <ul>
             {data.summary.overdueYears.map((year) => (
               <li key={year.year}>
-                Zaległy {year.year}: pozostało {year.remaining} dni (wymiar {year.entitled}, wykorzystano {year.used},
-                zaplanowano {year.planned}).
+                Zaległy {year.year}: pozostało {formatAmount(year.remaining)} dni (wymiar {formatAmount(year.entitled)}, wykorzystano {formatAmount(year.used)},
+                zaplanowano {formatAmount(year.planned)}).
               </li>
             ))}
           </ul>
         )}
+        <p>
+          Urlop na żądanie: wykorzystano {formatAmount(data.summary.onDemand.used)}, zaplanowano{" "}
+          {formatAmount(data.summary.onDemand.planned)}, pozostało {formatAmount(data.summary.onDemand.remaining)} z{" "}
+          {data.summary.onDemand.entitled} dni. Limit schodzi z urlopu bieżącego.
+        </p>
       </Card>
       {data.showTeam ? (
         <Card>

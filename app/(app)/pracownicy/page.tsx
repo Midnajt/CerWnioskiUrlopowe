@@ -1,7 +1,7 @@
 import { CardHeading } from "@/components/glyphs";
 import { Card, Muted, Table, TableWrap } from "@/components/ui";
 import { requireEmployee } from "@/lib/auth/session";
-import { fullName } from "@/lib/leave/labels";
+import { formatAmount, fullName } from "@/lib/leave/labels";
 import { loadStaff } from "@/lib/leave/views";
 
 export default async function StaffPage() {
@@ -25,6 +25,7 @@ export default async function StaffPage() {
               <th>Pracownik</th>
               <th>Dział</th>
               <th>Bieżący pozostało</th>
+              <th>Na żądanie pozostało</th>
               <th>Zaległy pozostało</th>
             </tr>
           </thead>
@@ -37,8 +38,9 @@ export default async function StaffPage() {
                   {person.isHr ? " · kadry" : ""}
                 </td>
                 <td>{person.departmentName}</td>
-                <td>{summary.current ? summary.current.remaining : "—"}</td>
-                <td>{summary.overdueRemaining}</td>
+                <td>{summary.current ? formatAmount(summary.current.remaining) : "—"}</td>
+                <td>{formatAmount(summary.onDemand.remaining)}</td>
+                <td>{formatAmount(summary.overdueRemaining)}</td>
               </tr>
             ))}
           </tbody>
