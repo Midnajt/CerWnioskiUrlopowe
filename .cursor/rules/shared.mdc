@@ -1,0 +1,58 @@
+---
+description: Cer — wnioski urlopowe. Stack, MVP, Supabase, Vercel
+alwaysApply: true
+---
+
+# Cer — wnioski urlopowe
+
+Reguły plików: `frontend.mdc`, `backend.mdc`, `db.mdc`.
+Produkt: **Cer — wnioski urlopowe** (Cer Motor). Proces: `docs/specyfikacja_procesu_urlopy_20261103.md`.
+Agent nie dokłada funkcji spoza MVP. Komentarze recenzentów spoza sekcji 43 nie wchodzą do kodu.
+
+## Stack
+
+| Warstwa | Technologia |
+|---------|-------------|
+| Aplikacja | Next.js App Router + React + TypeScript strict. Jeden deploy na Vercel |
+| Styl | styled-components i `lib/styles/theme.ts` |
+| Baza i konta | Supabase, region EU. Postgres + Auth. Dostęp do danych tylko w `lib/db/` |
+| Env | `.env` w `.gitignore` i zmienne Vercel. Bez `NEXT_PUBLIC_` dla kluczy Supabase |
+
+Dev: `npm run dev` w katalogu głównym. Produkcja: `next build`.
+Kod jest tylko w TypeScript. Krótki komentarz po polsku mówi, co robi fragment i dlaczego.
+
+## Auth
+
+Supabase Auth (e-mail i hasło). Sesja w ciasteczku httpOnly przez `@supabase/ssr` na serwerze.
+Przeglądarka nie tworzy klienta Supabase. Własny JWT i bcrypt są zakazane.
+Rola nie siedzi w tokenie: pracownik jest rekordem, przełożony wynika z `manager_id`, dyrektor i kadry to flagi.
+
+## MVP
+
+- Role: pracownik, przełożony, dyrektor, kadry. Jedna osoba może mieć kilka funkcji i zawsze składa własny wniosek.
+- Rodzaje: urlop wypoczynkowy bieżący i zaległy. Przy zaległym system zużywa najstarszy rok. Nie wymusza kolejności zaległy przed bieżącym.
+- Ścieżka: pracownik → przełożony → dyrektor, gdy okres kalendarzowy jest dłuższy niż 21 dni → kadry. Wycofanie przed ostatecznym zatwierdzeniem.
+- Powyżej 3 tygodni = więcej niż 21 dni kalendarzowych od daty rozpoczęcia do zakończenia włącznie. Użytkownik nie omija dyrektora.
+- Brak limitu blokuje złożenie. Limit z seeda jest źródłem prawdy. Wymiar etatu jest zapisany i nie przelicza puli.
+- Dni robocze: soboty, niedziele i święta z tabeli. Jeden kalendarz firmy.
+- Konta, struktura, limity i święta: `npm run seed`. Panelu administratora nie ma.
+- Powiadomienia tylko w aplikacji.
+- Układ pulpitu i formularza ze specyfikacji. Kolory wyłącznie z 12 próbek `theme.colors`.
+
+## Później, nie budować teraz
+
+SENIOR, Administrator (konta, struktura, limity), pozostałe rodzaje nieobecności, załączniki, mail, przypomnienia 24/48 h, integracja HR i Outlook, zmiana albo anulowanie zatwierdzonego wniosku, harmonogramy zmianowe, urlop godzinowy, osobna akceptacja przez osobę zastępującą. System tylko sprawdza, czy wskazany zastępca nie jest nieobecny. Zastępstwo osoby akceptującej kieruje nowe wnioski do zastępcy.
+
+## Zakazane bez nowej decyzji
+
+Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne ORM, MySQL, klucz Supabase w komponencie klienckim, zapis plików na dysk serwera.
+
+## Konwencje
+
+- Schemat bazy: `docs/db.md`. Bez tego pliku nie dodawaj tabel.
+- Raporty: `cursor/reports`, data w nazwie `_rrrrmmdd`.
+- **Ostatni status:** po prompcie w trybie Agent lub Plan, który każe coś zrobić, nadpisz sekcję trzema zdaniami po polsku: (1) co zrobiono, (2) na czym stanęło, (3) co jest następne. Zostaw tylko najnowszy wpis. Data: RRRR-MM-DD. W trybie Ask nie ruszaj.
+
+## Ostatni status
+
+**2026-11-03:** Powstał raport dotychczasowej pracy w `.cursor/reports/raport_prac_20261103.md`. Opisuje MVP, seed, poprawkę adresu Supabase oraz motyw i ikony. Następny krok to przejście ścieżki akceptacji na żywych kontach.

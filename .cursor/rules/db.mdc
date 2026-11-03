@@ -1,0 +1,33 @@
+---
+description: Supabase Cer — klient, zapytania i migracje tylko w lib/db i supabase/
+globs: lib/db/**,supabase/**,docs/db.md
+alwaysApply: false
+---
+
+# Baza (`lib/db/`)
+
+Supabase (Postgres, region EU). Klient, zapytania i helpery są w `lib/db/`. SQL jest w `supabase/migrations/`.
+Reszta aplikacji importuje funkcje z `lib/db/`.
+
+## Klient
+
+- `@supabase/supabase-js`, klucz secret albo service role, `persistSession: false`.
+- Jedna instancja na proces. Nie twórz klienta przy każdym zapytaniu w module, który już go trzyma.
+- Adres: `SUPABASE_URL`. Klucz: `SUPABASE_SECRET_KEY` albo `SUPABASE_SERVICE_ROLE_KEY`.
+- Ten klucz nie wchodzi do `lib/auth/`, komponentów, repozytorium ani logów.
+- RLS włączone bez polityk dla klucza anon. Service role i tak omija RLS. Autoryzacja jest w kodzie serwera.
+- ORM tylko po uzgodnieniu.
+
+## Zapytania
+
+- Jeden zasób na plik w `lib/db/queries/`. Krótki komentarz przy eksporcie.
+- Filtry przekazuj jako parametry klienta. Nie sklejaj SQL z inputu użytkownika.
+- Tabele i kolumny bierz z `docs/db.md`. Bez tego pliku nie dodawaj schematu.
+
+## Migracje
+
+Plik SQL w `supabase/migrations/` z opisem w nazwie. Zmiana schematu idzie migracją, nie ręczną edycją opisu bez SQL.
+
+## Nie rób
+
+`createClient` poza `lib/db/`, SQL poza migracjami, MySQL, klucza secret w przeglądarce, tabel spoza `docs/db.md`.

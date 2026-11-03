@@ -1,0 +1,9 @@
+---
+description: Odnośnik. Treść reguł jest w .cursor/rules/shared.mdc
+alwaysApply: false
+---
+
+# Reguły produktu
+
+Źródło reguł, które Cursor stosuje w każdej rozmowie: `.cursor/rules/shared.mdc`.
+Ten plik nie powtarza treści, żeby nie było dwóch wersji stacku i MVP.

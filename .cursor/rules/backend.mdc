@@ -1,0 +1,34 @@
+---
+description: Serwer Cer — Route Handlery Next.js, auth i reguły wniosku
+globs: app/api/**/*.ts,lib/auth/**,lib/leave/**,proxy.ts
+alwaysApply: false
+---
+
+# Serwer
+
+Next.js Route Handlery i moduły serwerowe. Expressa nie ma. Baza: tylko import z `lib/db/` (`db.mdc`).
+
+## Auth
+
+- Logowanie: Route Handler woła `signInWithPassword` przez `createServerClient` (`@supabase/ssr`).
+- Klucz publishable albo anon jest tylko w module auth na serwerze. Secret albo service role tylko w `lib/db/`.
+- Middleware odświeża sesję i woła `getUser()`, zanim powstanie odpowiedź. Publiczne są `/login`, `/api/health` i `/api/auth/login`.
+- Mutacje sprawdzają pracownika z sesji. Nie ufaj roli przysłanej z przeglądarki.
+
+## API
+
+- Prefiks `/api`. Health: `GET /api/health` pinguje Supabase.
+- Błąd to JSON `{ error: string }` bez stacka.
+- Odczyt stron: Server Component woła `lib/db`. Formularz woła `/api`.
+- Wejście waliduj przed zapisem. Zły wniosek → 400, brak sesji → 401, cudzy zasób → 403.
+
+## Wniosek
+
+Czysta logika dat i przejść statusu siedzi w `lib/leave/` i nie importuje bazy, żeby dało się ją testować i użyć w formularzu.
+Brak limitu albo niedostępny zastępca blokuje złożenie. Kolizja w zespole jest ostrzeżeniem przy akceptacji przełożonego.
+Odrzucenie i cofnięcie wymagają komentarza. Każdy krok zapisuje zdarzenie i powiadomienie w aplikacji.
+Dyrektor jest wymagany, gdy dni kalendarzowe > 21. Zastępstwo akceptującego jest wyliczane przy wejściu w dany etap i zapisywane na wniosku.
+
+## Nie rób
+
+Express, Nest, własnego JWT, bcrypt, klucza Supabase w kliencie, zapisu plików na dysk, funkcji spoza MVP.

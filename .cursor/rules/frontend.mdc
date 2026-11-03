@@ -1,0 +1,53 @@
+---
+description: Frontend Cer — Next.js, React, TypeScript, styled-components
+globs: app/**/*.tsx,components/**/*.tsx,lib/styles/**,lib/registry.tsx
+alwaysApply: false
+---
+
+# Frontend
+
+Next.js App Router, React, TypeScript strict, styled-components. Produkt: `shared.mdc`.
+
+## Zasady
+
+- Routing to pliki w `app/`. Bez React Router.
+- Komponenty funkcyjne. `type Props = { ... }`. Handlery z prefiksem `handle`.
+- Early return dla loadingu, błędu i braku danych.
+- Bez `useMemo`, `useCallback` i `React.memo` na zapas.
+- Typy zamiast `any`. Semikolony.
+- Kolory i font tylko z `theme` (`theme.colors.*`, `theme.surface.*`, `theme.fonts.*`). Hex w komponencie jest błędem. `surface` tylko przestawia te same 12 próbek między jasnym i ciemnym motywem.
+- Układ pulpitu i formularza: `docs/specyfikacja_procesu_urlopy_20261103.md`. Pomarańcz i niebieski ze zrzutów SunCode nie wchodzą do theme.
+- Formularz wniosku: etykieta i pole, na wąskim ekranie pole pod etykietą.
+- Dane biorą się z Server Components albo z `/api`. W kliencie nie ma `@supabase/supabase-js` ani `@supabase/ssr`.
+
+## Theme
+
+Dwanaście próbek, bez zmiany hexów. `ink` to prawie czerń. Zieleń od `green950` do `green500`. `teal800` i `teal500` to morski i turkus, `cyan` to jasny turkus. `cream` to jasny żółtozielony. `accent` to cegła. `white` to biel próbki.
+
+```ts
+export const theme = {
+  colors: {
+    ink: "#070803",
+    green950: "#11280E",
+    green900: "#152F24",
+    green800: "#263E2E",
+    green700: "#30652F",
+    teal800: "#2A6B71",
+    teal500: "#57A49E",
+    cyan: "#6AE6E4",
+    green500: "#31B964",
+    cream: "#EFF6C2",
+    accent: "#B8462B",
+    white: "#F9F9F9",
+  },
+};
+```
+
+## styled-components
+
+`compiler.styledComponents: true` w `next.config`. Rejestr `useServerInsertedHTML` w `lib/registry.tsx` owija root layout razem z `ThemeProvider`.
+Transient props z `$`, żeby nie trafiały do DOM. Reset i font tylko w `GlobalStyle`.
+
+## Nie rób
+
+Tailwind, Shadcn, Radix, osobnych plików CSS poza fontem, ekranów spoza MVP, klienta Supabase w przeglądarce.
