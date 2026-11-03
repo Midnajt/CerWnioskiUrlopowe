@@ -1,7 +1,5 @@
-import { Glyph } from "@/components/glyphs";
 import { LoginForm } from "@/components/LoginForm";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { LoginCard, LoginTitle, RowActions } from "@/components/ui";
+import { LoginCard, LoginLogo, LoginTitle } from "@/components/ui";
 
 type Props = { searchParams: Promise<{ error?: string }> };
 
@@ -14,12 +12,13 @@ export default async function LoginPage({ searchParams }: Props) {
   const initialError = params.error ? (ERRORS[params.error] ?? null) : null;
   return (
     <LoginCard>
-      <RowActions>
-        <ThemeToggle />
-      </RowActions>
       <LoginTitle>
-        <Glyph name="login" size={28} />
-        Cer — wnioski urlopowe
+        <LoginLogo src="/cm_logo.png" alt="Logo CerMotor" width={64} height={64} />
+        <span>
+          CerMotor
+          <br />
+          Wnioski urlopowe
+        </span>
       </LoginTitle>
       <p>Zaloguj się, aby złożyć albo zaakceptować wniosek.</p>
       <LoginForm initialError={initialError} />

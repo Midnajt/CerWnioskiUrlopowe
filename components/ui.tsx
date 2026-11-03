@@ -269,8 +269,17 @@ export const LoginCard = styled.main`
 export const LoginTitle = styled.h1`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin: 0 0 8px;
+  line-height: 1.25;
+`;
+
+export const LoginLogo = styled.img`
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: contain;
+  flex: none;
 `;
 
 export const MonthGrid = styled.div`
