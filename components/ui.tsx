@@ -642,6 +642,7 @@ export const LoginThemeSlot = styled.div`
   z-index: 2;
   button {
     color: ${({ theme }) => (theme.mode === "dark" ? theme.surface.border : theme.surface.link)};
+    background: ${({ theme }) => theme.surface.card};
   }
 `;
 
