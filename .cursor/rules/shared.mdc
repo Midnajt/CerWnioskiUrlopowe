@@ -55,4 +55,4 @@ Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne O
 
 ## Ostatni status
 
-**2026-11-04:** Między rolami a przebiegiem wniosku jest ścieżka w kafelkach: pracownik, przełożony, dyrektor i kadry. Dyrektor ma przerywaną obwódkę, bo wchodzi tylko powyżej 21 dni. Następny krok to commit, jeśli te zmiany mają iść na produkcję.
+**2026-11-04:** Do seeda doszli Michał Olszewski (kierownik IT) i Marcin Krzysztoszek, którego przełożonym jest Michał. Konta powstają po `npm run seed` i logują się hasłem z `SEED_PASSWORD`. Następny krok to commit, jeśli te zmiany mają iść na produkcję.

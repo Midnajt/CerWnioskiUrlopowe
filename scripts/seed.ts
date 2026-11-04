@@ -167,6 +167,32 @@ async function main(): Promise<void> {
       managerNumber: "E003",
       balances: [{ year, pool: "current", entitled: 26, used: 4 }],
     },
+    {
+      email: "m.olszewski@cermotor.com.pl",
+      number: "E007",
+      firstName: "Michał",
+      lastName: "Olszewski",
+      title: "Kierownik",
+      department: "IT",
+      location: "Biuro",
+      director: false,
+      hr: false,
+      managerNumber: "E001",
+      balances: [{ year, pool: "current", entitled: 26, used: 0 }],
+    },
+    {
+      email: "m.krzysztoszek@cermotor.com.pl",
+      number: "E008",
+      firstName: "Marcin",
+      lastName: "Krzysztoszek",
+      title: "Specjalista",
+      department: "IT",
+      location: "Biuro",
+      director: false,
+      hr: false,
+      managerNumber: "E007",
+      balances: [{ year, pool: "current", entitled: 26, used: 0 }],
+    },
   ];
 
   const departmentIds = new Map<string, string>();
