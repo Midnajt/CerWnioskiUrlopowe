@@ -75,11 +75,10 @@ export function AppShell({ me, taskCount, showTeam, children }: Props) {
       </Welcome>
       <Frame>
         <TileGrid>
-          {tiles.map((tile, index) => (
+          {tiles.map((tile) => (
             <Tile
               key={tile.href}
               href={tile.href}
-              $index={index}
               $active={tileActive(pathname, tile.href)}
               aria-current={tileActive(pathname, tile.href) ? "page" : undefined}
             >

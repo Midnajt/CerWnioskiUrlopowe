@@ -15,6 +15,7 @@ import {
   FiEdit3,
   FiFileText,
   FiFilter,
+  FiHelpCircle,
   FiLogIn,
   FiLogOut,
   FiMoon,
@@ -53,6 +54,7 @@ const glyphs = {
   save: FiSave,
   send: FiSend,
   filter: FiFilter,
+  faq: FiHelpCircle,
   prev: FiChevronLeft,
   next: FiChevronRight,
 } as const satisfies Record<string, IconType>;

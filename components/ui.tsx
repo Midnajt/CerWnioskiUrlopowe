@@ -52,14 +52,22 @@ export const TopActions = styled.div<{ $ghost?: boolean }>`
   align-items: center;
   gap: 8px;
   ${({ $ghost, theme }) =>
-    $ghost &&
-    css`
-      > button,
-      > div > button {
-        color: ${theme.colors.white};
-        border-color: ${theme.surface.headerLine};
-      }
-    `}
+    $ghost
+      ? css`
+          > button,
+          > div > button {
+            color: ${theme.colors.white};
+            border-color: ${theme.surface.headerLine};
+          }
+        `
+      : theme.mode === "dark"
+        ? css`
+            > button,
+            > div > button {
+              color: ${theme.surface.border};
+            }
+          `
+        : ""}
 `;
 
 export const Brand = styled(Link)`
@@ -140,9 +148,7 @@ export const TileGrid = styled.div`
   margin-bottom: 16px;
 `;
 
-const tileTones = ["accent", "teal800", "green700", "teal500", "green800"] as const;
-
-export const Tile = styled(Link)<{ $index: number; $active?: boolean }>`
+export const Tile = styled(Link)<{ $active?: boolean }>`
   min-height: 140px;
   padding: 14px;
   border-radius: 16px;
@@ -161,26 +167,18 @@ export const Tile = styled(Link)<{ $index: number; $active?: boolean }>`
       transition: none;
     }
   }
-  ${({ $index, $active, theme }) =>
-    theme.mode === "dark"
-      ? css`
-          color: ${theme.colors.white};
-          background: ${theme.colors[tileTones[$index % tileTones.length]]};
-          border: 1.5px solid ${$active ? theme.colors.white : "transparent"};
-          box-shadow: ${$active ? `inset 0 0 0 1px ${theme.colors.white}` : "none"};
-        `
-      : css`
-          color: ${$active ? theme.colors.white : theme.surface.text};
-          background: ${$active ? theme.surface.action : theme.surface.tile};
-          border: 1.5px solid ${$active ? theme.surface.action : theme.surface.border};
-          svg {
-            color: ${$active ? theme.colors.white : theme.surface.icon};
-          }
-          &:hover {
-            background: ${$active ? theme.surface.action : theme.surface.card};
-            border-color: ${theme.surface.cardBorder};
-          }
-        `}
+  ${({ $active, theme }) => css`
+    color: ${$active ? theme.colors.white : theme.surface.text};
+    background: ${$active ? theme.surface.action : theme.surface.tile};
+    border: 1.5px solid ${$active ? theme.surface.action : theme.surface.border};
+    svg {
+      color: ${$active ? theme.colors.white : theme.surface.icon};
+    }
+    &:hover {
+      background: ${$active ? theme.surface.action : theme.surface.card};
+      border-color: ${theme.surface.cardBorder};
+    }
+  `}
 `;
 
 export const TileLabel = styled.span`
@@ -347,16 +345,22 @@ export const UserMenuPanel = styled.div<{ $ghost?: boolean }>`
   z-index: 20;
   width: 100%;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   background: transparent;
   border: none;
-  button {
+  button,
+  a {
     width: 100%;
     justify-content: flex-start;
+    text-decoration: none;
   }
   ${({ $ghost, theme }) =>
     $ghost
       ? css`
-          button {
+          button,
+          a {
             color: ${theme.colors.white};
             background: ${theme.surface.menuGlass};
             border-color: ${theme.surface.menuGlassLine};
@@ -364,8 +368,9 @@ export const UserMenuPanel = styled.div<{ $ghost?: boolean }>`
           }
         `
       : css`
-          button {
-            color: ${theme.surface.link};
+          button,
+          a {
+            color: ${theme.mode === "dark" ? theme.surface.border : theme.surface.link};
             background: ${theme.surface.page};
             border-color: ${theme.surface.border};
           }
@@ -390,6 +395,7 @@ export const TextLink = styled(Link)`
   svg {
     display: block;
     flex: none;
+    color: ${({ theme }) => theme.surface.icon};
   }
 `;
 

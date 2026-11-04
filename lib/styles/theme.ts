@@ -28,6 +28,19 @@ const lightChrome = {
   orangeWash: "#FFF7ED",
 };
 
+// Ciemny pulpit: szarość jak panel Supabase. Seledyn zostaje akcentem, nie tłem.
+const darkChrome = {
+  page: "#1C1C1C",
+  card: "#262626",
+  tile: "#262626",
+  input: "#262626",
+  raised: "#2E2E2E",
+  text: "#F5F5F5",
+  muted: "#A3A3A3",
+  line: "#32D6D1",
+  headerFrost: "rgb(28 28 28 / 85%)",
+};
+
 const fonts = {
   body: '"Segoe UI", "Helvetica Neue", sans-serif',
 };
@@ -54,25 +67,25 @@ function buildTheme(mode: ThemeMode) {
     fonts,
     hero,
     mark,
-    // Ciemny motyw zostaje przy dwunastu próbkach. Jasny dostaje łupek, biel i niebieski.
+    // Ciemny pulpit bierze szarości z darkChrome. Ikona jest turkusem kreski, obwódka karty i link zostają przy teal500.
     surface: {
-      page: dark ? colors.green950 : lightChrome.page,
-      card: dark ? colors.green900 : lightChrome.card,
-      raised: dark ? colors.green800 : lightChrome.page,
-      text: dark ? colors.cream : lightChrome.text,
-      muted: dark ? colors.teal500 : lightChrome.muted,
-      border: dark ? colors.teal500 : lightChrome.line,
+      page: dark ? darkChrome.page : lightChrome.page,
+      card: dark ? darkChrome.card : lightChrome.card,
+      raised: dark ? darkChrome.raised : lightChrome.page,
+      text: dark ? darkChrome.text : lightChrome.text,
+      muted: dark ? darkChrome.muted : lightChrome.muted,
+      border: dark ? darkChrome.line : lightChrome.line,
       cardBorder: dark ? colors.teal500 : lightChrome.blue,
-      link: dark ? colors.cyan : lightChrome.blue,
-      icon: dark ? colors.cyan : lightChrome.blue,
-      input: dark ? colors.green800 : lightChrome.card,
-      tile: dark ? colors.green800 : lightChrome.tile,
+      link: dark ? colors.teal500 : lightChrome.blue,
+      icon: dark ? darkChrome.line : lightChrome.blue,
+      input: dark ? darkChrome.input : lightChrome.card,
+      tile: dark ? darkChrome.tile : lightChrome.tile,
       ok: dark ? colors.green500 : lightChrome.green,
       warn: dark ? colors.accent : lightChrome.orange,
-      okWash: dark ? colors.green900 : lightChrome.greenWash,
-      warnWash: dark ? colors.green800 : lightChrome.orangeWash,
+      okWash: dark ? darkChrome.raised : lightChrome.greenWash,
+      warnWash: dark ? darkChrome.raised : lightChrome.orangeWash,
       action: dark ? colors.teal800 : lightChrome.blue,
-      headerFrost: dark ? "rgb(17 40 14 / 85%)" : "rgb(255 255 255 / 85%)",
+      headerFrost: dark ? darkChrome.headerFrost : "rgb(255 255 255 / 85%)",
       headerLine: "rgb(255 255 255 / 55%)",
       headerShadow: "0 8px 24px rgb(7 8 3 / 12%)",
       menuGlass: "rgb(255 255 255 / 18%)",

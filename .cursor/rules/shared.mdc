@@ -37,7 +37,7 @@ Rola nie siedzi w tokenie: pracownik jest rekordem, przełożony wynika z `manag
 - Dni robocze: soboty, niedziele i święta z tabeli. Jeden kalendarz firmy.
 - Konta, struktura, limity i święta: `npm run seed`. Panelu administratora nie ma.
 - Powiadomienia tylko w aplikacji.
-- Układ pulpitu: belka powitania z ruchomą mgłą, od górnej krawędzi ekranu, zostaje. Szczegóły w `frontend.mdc` i w `docs/plan_wdrozenia_20261103.md`. Jasny pulpit używa `theme.surface` (strona `#F8FAFC`, karty `#FFFFFF`, niebieski `#2563EB`, zieleń `#16A34A` i pomarańcz `#EA580C` na komunikatach i przyciskach), `theme.hero` i `theme.mark` (`#D92D59` na awatarze i plakietce „NOWE”). Ciemny motyw zostaje przy 12 próbkach `theme.colors`. Nie wracać do zielonego gradientu ani do pomarańczowej belki ze zrzutów.
+- Układ pulpitu: belka powitania z ruchomą mgłą, od górnej krawędzi ekranu, zostaje. Szczegóły w `frontend.mdc` i w `docs/plan_wdrozenia_20261103.md`. Jasny pulpit używa `theme.surface` (strona `#F8FAFC`, karty `#FFFFFF`, niebieski `#2563EB`, zieleń `#16A34A` i pomarańcz `#EA580C` na komunikatach i przyciskach), `theme.hero` i `theme.mark` (`#D92D59` na awatarze i plakietce „NOWE”). Ciemny pulpit używa szarości w `theme.surface` (strona `#1C1C1C`, karta `#262626`, kreska i ikony `#32D6D1`, seledyn `#57A49E` na obwódce karty i linku). Zielonego tła strony i kolorowych kafelków nie przywracać. Nie wracać do zielonego gradientu ani do pomarańczowej belki ze zrzutów.
 
 ## Później, nie budować teraz
 
@@ -55,4 +55,4 @@ Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne O
 
 ## Ostatni status
 
-**2026-11-04:** Deploy na Vercel padał na sprawdzaniu typów (`three` bez typów w `WelcomeFog.tsx`), więc doszło `@types/three@~0.159.0` w devDependencies. Lokalny `npm run build` przechodzi, zmiany czekają na commit i push. Następny krok to ponowny deploy na Vercel, a potem osobna decyzja o ciemnym motywie.
+**2026-11-04:** W ciemnym motywie ikony, które były seledynowe, są teraz `#32D6D1`, tak jak kreska. Obwódka karty i link zostają przy `#57A49E`. Następny krok to commit i deploy, gdy ten wygląd ma wejść na Vercel.

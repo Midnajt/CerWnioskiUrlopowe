@@ -15,7 +15,7 @@ export const GlobalStyle = createGlobalStyle`
   a { color: inherit; }
   button, input, select, textarea { font: inherit; }
   :focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.cyan};
+    outline: 2px solid ${({ theme }) => (theme.mode === "dark" ? theme.colors.teal500 : theme.colors.cyan)};
     outline-offset: 2px;
   }
 `;

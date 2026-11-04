@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Glyph } from "@/components/glyphs";
 import { Button, UserMenu, UserMenuPanel } from "@/components/ui";
@@ -9,6 +10,7 @@ type Props = { name: string; ghost?: boolean };
 
 export function LogoutButton({ name, ghost = false }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -44,6 +46,11 @@ export function LogoutButton({ name, ghost = false }: Props) {
     setOpen((value) => !value);
   }
 
+  function handleFaq() {
+    setOpen(false);
+    router.push("/faq");
+  }
+
   return (
     <UserMenu ref={rootRef}>
       <Button type="button" aria-expanded={open} aria-haspopup="menu" onClick={handleToggle}>
@@ -52,6 +59,10 @@ export function LogoutButton({ name, ghost = false }: Props) {
       </Button>
       {open ? (
         <UserMenuPanel $ghost={ghost} role="menu">
+          <Button as={Link} href="/faq" role="menuitem" aria-current={pathname === "/faq" ? "page" : undefined} onClick={handleFaq}>
+            <Glyph name="faq" />
+            FAQ
+          </Button>
           <Button type="button" role="menuitem" onClick={handleLogout} disabled={pending}>
             <Glyph name="logout" />
             {pending ? "Wylogowanie…" : "Wyloguj"}

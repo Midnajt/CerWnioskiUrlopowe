@@ -17,7 +17,7 @@ Obecna wersja produkcyjna obsługuje:
 
 ## Wygląd pulpitu — przyjęty 2026-11-04
 
-Jasny pulpit jest przyjęty. Nie wracać do zielonego gradientu powitania ani do pomarańczowej belki ze zrzutów SunCode. Ciemny motyw nie był przebudowywany.
+Jasny pulpit jest przyjęty. Nie wracać do zielonego gradientu powitania ani do pomarańczowej belki ze zrzutów SunCode. Ciemny motyw, przyjęty 2026-11-04, ma szare tło `#1C1C1C` i karty `#262626`. Seledyn `#57A49E` jest obwódką, linkiem i ikoną. Aktywny kafelek bierze `#2A6B71`.
 
 Belka powitania (`Welcome` w `components/ui.tsx`, mgła w `components/WelcomeFog.tsx`) zostaje w tej postaci:
 
