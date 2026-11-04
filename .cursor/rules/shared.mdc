@@ -55,4 +55,4 @@ Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne O
 
 ## Ostatni status
 
-**2026-11-04:** Strona logowania nie ma napisu CerMotor, karta ma niebieską obwódkę, a na dole jest pasek „wersja demonstracyjna”. Kafelki i formularz zostają jak poprzednio. Następny krok to osobna decyzja o ciemnym motywie.
+**2026-11-04:** Deploy na Vercel padał na sprawdzaniu typów (`three` bez typów w `WelcomeFog.tsx`), więc doszło `@types/three@~0.159.0` w devDependencies. Lokalny `npm run build` przechodzi, zmiany czekają na commit i push. Następny krok to ponowny deploy na Vercel, a potem osobna decyzja o ciemnym motywie.
