@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DateField } from "@/components/DateField";
 import { Glyph } from "@/components/glyphs";
-import { Button, FormRow, Notice, Readonly, RowActions, Select } from "@/components/ui";
+import { Button, FormRow, LabelText, Notice, Readonly, RowActions, Select } from "@/components/ui";
 import { calendarDaysInclusive, countWorkingDays, formatPlDate, isNonWorkingDay, requiresDirector } from "@/lib/leave/dates";
 import { formatAmount, fullName, TYPE_LABEL } from "@/lib/leave/labels";
 import {
@@ -120,7 +120,7 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, today, ini
         <Notice>Ten wniosek przekracza 3 tygodnie. Po akceptacji przełożonego trafi do dyrektora.</Notice>
       ) : null}
       <FormRow>
-        Rodzaj urlopu *
+        <LabelText required>Rodzaj urlopu</LabelText>
         <Select value={leaveType} onChange={(event) => handleType(event.target.value as LeaveType)}>
           <option value="current">{TYPE_LABEL.current}</option>
           <option value="overdue">{TYPE_LABEL.overdue}</option>
@@ -134,17 +134,19 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, today, ini
       </FormRow>
       {leaveType === "saturday_comp" ? (
         <FormRow>
-          Dzień, w którym wykonywano pracę *
+          <LabelText required>Dzień, w którym wykonywano pracę</LabelText>
           <DateField value={workedDate} onChange={setWorkedDate} required />
         </FormRow>
       ) : null}
       <FormRow>
-        {singleDay ? (leaveType === "saturday_comp" ? "Proponowany dzień wolny *" : "Data *") : "Planowany urlop od *"}
+        <LabelText required>
+          {singleDay ? (leaveType === "saturday_comp" ? "Proponowany dzień wolny" : "Data") : "Planowany urlop od"}
+        </LabelText>
         <DateField value={dateFrom} onChange={handleStart} required />
       </FormRow>
       {singleDay ? null : (
         <FormRow>
-          Planowany urlop do *
+          <LabelText required>Planowany urlop do</LabelText>
           <DateField value={dateTo} min={dateFrom || undefined} onChange={handleEnd} required />
         </FormRow>
       )}
@@ -157,7 +159,7 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, today, ini
         </Readonly>
       </FormRow>
       <FormRow>
-        Zastępca *
+        <LabelText required>Zastępca</LabelText>
         <Select value={substituteId} onChange={(event) => setSubstituteId(event.target.value)} required>
           <option value="">Wybierz osobę</option>
           {colleagues.map((person) => (
@@ -183,7 +185,7 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, today, ini
           <Glyph name="send" />
           Przekaż do akceptacji
         </Button>
-        <Button type="button" disabled={pending} onClick={() => handleSave(false)}>
+        <Button type="button" $tone="neutral" disabled={pending} onClick={() => handleSave(false)}>
           <Glyph name="save" />
           Zapisz formularz
         </Button>

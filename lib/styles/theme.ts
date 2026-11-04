@@ -21,6 +21,8 @@ const lightChrome = {
   text: "#0F172A",
   muted: "#64748B",
   line: "#E2E8F0",
+  // Tło pól i wartości tylko do odczytu, ciemniejsze od bieli karty.
+  field: "#E7EDF4",
   blue: "#2563EB",
   green: "#16A34A",
   orange: "#EA580C",
@@ -80,14 +82,14 @@ function buildTheme(mode: ThemeMode) {
     surface: {
       page: dark ? darkChrome.page : lightChrome.page,
       card: dark ? darkChrome.card : lightChrome.card,
-      raised: dark ? darkChrome.raised : lightChrome.page,
+      raised: dark ? darkChrome.raised : lightChrome.field,
       text: dark ? darkChrome.text : lightChrome.text,
       muted: dark ? darkChrome.muted : lightChrome.muted,
       border: dark ? darkChrome.line : lightChrome.line,
       cardBorder: dark ? colors.teal500 : lightChrome.blue,
       link: dark ? colors.teal500 : lightChrome.blue,
       icon: dark ? darkChrome.line : lightChrome.blue,
-      input: dark ? darkChrome.input : lightChrome.card,
+      input: dark ? darkChrome.input : lightChrome.field,
       tile: dark ? darkChrome.tile : lightChrome.tile,
       tileBorder: dark ? darkChrome.tileLine : lightChrome.line,
       tileActive: dark ? darkChrome.line : lightChrome.blue,
@@ -101,6 +103,8 @@ function buildTheme(mode: ThemeMode) {
       headerShadow: "0 8px 24px rgb(7 8 3 / 12%)",
       menuGlass: "rgb(255 255 255 / 18%)",
       menuGlassLine: "rgb(255 255 255 / 50%)",
+      // Gwiazdka pola wymaganego. Ten sam czerwony w jasnym i ciemnym motywie.
+      required: "#E50914",
     },
   };
 }

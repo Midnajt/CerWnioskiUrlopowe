@@ -6,7 +6,7 @@ import { CardHeading } from "@/components/glyphs";
 import { Card, Muted, Notice, Readonly, FormRow } from "@/components/ui";
 import { requireEmployee } from "@/lib/auth/session";
 import { formatPlDate, todayInWarsaw } from "@/lib/leave/dates";
-import { ACTION_LABEL, STATUS_LABEL, TYPE_LABEL, formatAmount, fullName, type EventAction } from "@/lib/leave/labels";
+import { ACTION_LABEL, STATUS_LABEL, TYPE_LABEL, fullName, type EventAction } from "@/lib/leave/labels";
 import { loadRequestPage } from "@/lib/leave/views";
 import { canEdit, canWithdraw } from "@/lib/leave/workflow";
 
@@ -80,14 +80,6 @@ export default async function LeaveRequestPage({ params }: Props) {
             <Readonly>
               {formatPlDate(request.dateFrom)} – {formatPlDate(request.dateTo)}: {request.workingDays} dni roboczych (
               {request.calendarDays} kalendarzowych)
-            </Readonly>
-          </FormRow>
-          <FormRow>
-            Czas
-            <Readonly>
-              {request.fullDay
-                ? `Cały dzień, ${formatAmount(request.plannedHours)} h`
-                : `${request.timeFrom ?? ""}–${request.timeTo ?? ""}, ${formatAmount(request.plannedHours)} h`}
             </Readonly>
           </FormRow>
           <FormRow>

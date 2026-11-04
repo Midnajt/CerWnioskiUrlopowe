@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import styled from "styled-components";
 import { Glyph } from "@/components/glyphs";
 import { Button, Notice } from "@/components/ui";
 
@@ -29,7 +30,7 @@ export function WithdrawButton({ requestId }: Props) {
   }
 
   return (
-    <div>
+    <WithdrawBlock>
       {error ? <Notice $tone="danger">{error}</Notice> : null}
       {confirming ? (
         <Button type="button" $tone="danger" disabled={pending} onClick={handleWithdraw}>
@@ -42,6 +43,10 @@ export function WithdrawButton({ requestId }: Props) {
           Wycofaj wniosek
         </Button>
       )}
-    </div>
+    </WithdrawBlock>
   );
 }
+
+const WithdrawBlock = styled.div`
+  margin-bottom: 24px;
+`;

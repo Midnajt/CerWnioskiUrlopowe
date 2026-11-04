@@ -20,22 +20,28 @@ export default async function TasksPage({ searchParams }: Props) {
   return (
     <Card>
       <CardHeading name="tasks">Moje zadania do wykonania we wnioskach urlopowych ({tasks.length})</CardHeading>
-      {tasks.length === 0 ? <Muted>Nie masz wniosków do decyzji.</Muted> : <RequestTable items={slice} />}
-      <p>
-        Wyświetlono {from}–{to} z {tasks.length}
-        {page > 1 ? (
-          <>
-            {" "}
-            · <TextLink href={`/zadania?page=${page - 1}`}><Glyph name="prev" /> Poprzednia</TextLink>
-          </>
-        ) : null}
-        {to < tasks.length ? (
-          <>
-            {" "}
-            · <TextLink href={`/zadania?page=${page + 1}`}>Następna <Glyph name="next" /></TextLink>
-          </>
-        ) : null}
-      </p>
+      {tasks.length === 0 ? (
+        <Muted>Nie masz wniosków do decyzji.</Muted>
+      ) : (
+        <>
+          <RequestTable items={slice} />
+          <p>
+            Wyświetlono {from}–{to} z {tasks.length}
+            {page > 1 ? (
+              <>
+                {" "}
+                · <TextLink href={`/zadania?page=${page - 1}`}><Glyph name="prev" /> Poprzednia</TextLink>
+              </>
+            ) : null}
+            {to < tasks.length ? (
+              <>
+                {" "}
+                · <TextLink href={`/zadania?page=${page + 1}`}>Następna <Glyph name="next" /></TextLink>
+              </>
+            ) : null}
+          </p>
+        </>
+      )}
     </Card>
   );
 }

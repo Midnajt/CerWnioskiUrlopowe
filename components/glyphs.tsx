@@ -5,6 +5,7 @@ import type { IconType } from "react-icons";
 import {
   FiAlertTriangle,
   FiBell,
+  FiBriefcase,
   FiCalendar,
   FiCheck,
   FiChevronLeft,
@@ -25,6 +26,8 @@ import {
   FiSave,
   FiSend,
   FiSun,
+  FiUser,
+  FiUserCheck,
   FiUsers,
   FiX,
 } from "react-icons/fi";
@@ -39,6 +42,9 @@ const glyphs = {
   bell: FiBell,
   list: FiFileText,
   people: FiUsers,
+  user: FiUser,
+  lead: FiUserCheck,
+  brief: FiBriefcase,
   calendar: FiCalendar,
   form: FiEdit3,
   history: FiClock,

@@ -1,5 +1,13 @@
-import { CardHeading } from "@/components/glyphs";
-import { Card, Point, PointClose, PointList, PointMark } from "@/components/ui";
+import { Fragment } from "react";
+import { CardHeading, Glyph, type GlyphName } from "@/components/glyphs";
+import { Card, Flow, FlowArrow, FlowIcon, FlowLabel, FlowNote, FlowStep, Point, PointClose, PointList, PointMark } from "@/components/ui";
+
+const path: { icon: GlyphName; label: string; optional?: boolean }[] = [
+  { icon: "user", label: "Pracownik" },
+  { icon: "lead", label: "Przełożony" },
+  { icon: "brief", label: "Dyrektor", optional: true },
+  { icon: "people", label: "Kadry" },
+];
 
 export default function FaqPage() {
   return (
@@ -46,6 +54,30 @@ export default function FaqPage() {
             </p>
           </Point>
         </PointList>
+      </Card>
+      <Card>
+        <CardHeading name="send">Ścieżka akceptacji</CardHeading>
+        <Flow aria-label="Pracownik, przełożony, dyrektor, kadry">
+          {path.map((step, index) => (
+            <Fragment key={step.label}>
+              {index > 0 ? (
+                <FlowArrow aria-hidden="true">
+                  <Glyph name="next" size={22} />
+                </FlowArrow>
+              ) : null}
+              <FlowStep $optional={step.optional}>
+                <FlowIcon>
+                  <Glyph name={step.icon} size={22} />
+                </FlowIcon>
+                <FlowLabel>
+                  {step.label}
+                  {step.optional ? <span aria-hidden="true">*</span> : null}
+                </FlowLabel>
+              </FlowStep>
+            </Fragment>
+          ))}
+        </Flow>
+        <FlowNote>Dyrektor wchodzi tylko wtedy, gdy urlop trwa dłużej niż 21 dni kalendarzowych.</FlowNote>
       </Card>
       <Card>
         <CardHeading name="list">Jak przebiega wniosek</CardHeading>

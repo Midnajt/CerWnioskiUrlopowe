@@ -251,6 +251,66 @@ export const PointClose = styled.p`
   border-top: 1px solid ${({ theme }) => theme.surface.border};
 `;
 
+/* Ścieżka akceptacji: kafelki ról i strzałka między nimi. Na wąskim ekranie idzie w dół. */
+export const Flow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  @media (max-width: 720px) {
+    flex-direction: column;
+  }
+`;
+
+export const FlowStep = styled.div<{ $optional?: boolean }>`
+  flex: 1 1 0;
+  width: 100%;
+  max-width: 180px;
+  min-height: 132px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 12px;
+  text-align: center;
+  border-radius: 16px;
+  background: ${({ theme }) => theme.surface.tile};
+  border: 1.5px ${({ $optional }) => ($optional ? "dashed" : "solid")} ${({ theme }) => theme.surface.cardBorder};
+  color: ${({ theme }) => theme.surface.text};
+`;
+
+export const FlowIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: ${({ theme }) => theme.surface.raised};
+  color: ${({ theme }) => theme.surface.icon};
+`;
+
+export const FlowLabel = styled.span`
+  font-weight: 700;
+  line-height: 1.2;
+`;
+
+export const FlowArrow = styled.span`
+  display: inline-flex;
+  flex: none;
+  color: ${({ theme }) => theme.surface.icon};
+  @media (max-width: 720px) {
+    transform: rotate(90deg);
+  }
+`;
+
+export const FlowNote = styled.p`
+  margin: 12px 0 0;
+  text-align: center;
+  color: ${({ theme }) => theme.surface.muted};
+`;
+
 export const TitleIcon = styled.span`
   display: inline-flex;
   color: ${({ theme }) => theme.surface.icon};
@@ -305,6 +365,22 @@ export const FormRow = styled.label`
     grid-template-columns: 1fr;
   }
 `;
+
+const RequiredStar = styled.span`
+  color: ${({ theme }) => theme.surface.required};
+`;
+
+type LabelTextProps = { children: React.ReactNode; required?: boolean };
+
+/** Etykieta pola. Przy required dokleja czerwoną gwiazdkę, jedną dla wszystkich formularzy. */
+export function LabelText({ children, required }: LabelTextProps) {
+  return (
+    <span>
+      {children}
+      {required ? <RequiredStar aria-hidden> *</RequiredStar> : null}
+    </span>
+  );
+}
 
 const field = css`
   width: 100%;
@@ -368,6 +444,7 @@ export const Button = styled.button<{ $tone?: "ok" | "danger" | "neutral"; $fill
     ${({ $fill, $tone, theme }) => {
       if ($tone === "ok") return theme.surface.ok;
       if ($tone === "danger") return theme.surface.warn;
+      if ($tone === "neutral") return theme.surface.link;
       if ($fill) return theme.surface.action;
       return theme.surface.border;
     }};
@@ -575,12 +652,71 @@ export const MonthGrid = styled.div`
   margin: 12px 0;
 `;
 
-export const DayCell = styled.div`
+/* Lista osób na urlopie. Wisi pod komórką i zostaje otwarta, gdy kursor przechodzi przez szczelinę. */
+export const DayPeople = styled.ul`
+  display: none;
+  position: absolute;
+  z-index: 4;
+  top: calc(100% + 4px);
+  left: 0;
+  margin: 0;
+  min-width: max(100%, 180px);
+  max-width: 260px;
+  max-height: 180px;
+  overflow: auto;
+  padding: 8px 10px;
+  list-style: none;
+  border-radius: 8px;
+  border: 1.5px solid ${({ theme }) => theme.surface.cardBorder};
+  background: ${({ theme }) => theme.surface.card};
+  color: ${({ theme }) => theme.surface.text};
+  box-shadow: ${({ theme }) => theme.surface.headerShadow};
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  li + li {
+    margin-top: 4px;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -8px;
+    height: 8px;
+  }
+`;
+
+export const DayCell = styled.div<{ $busy?: boolean; $alignEnd?: boolean }>`
+  position: relative;
   min-height: 48px;
   padding: 4px;
   border-radius: 8px;
   border: 1.5px solid ${({ theme }) => theme.surface.border};
   background: ${({ theme }) => theme.surface.raised};
+  ${({ $alignEnd }) =>
+    $alignEnd &&
+    css`
+      ${DayPeople} {
+        left: auto;
+        right: 0;
+      }
+    `}
+  ${({ $busy, theme }) =>
+    $busy &&
+    css`
+      background: ${theme.mode === "dark" ? theme.colors.green800 : theme.surface.okWash};
+      border-color: ${theme.surface.ok};
+      font-weight: 600;
+      &:hover,
+      &:focus-within {
+        z-index: 5;
+      }
+      &:hover ${DayPeople},
+      &:focus-within ${DayPeople} {
+        display: block;
+      }
+    `}
 `;
 
 export const FilterDetails = styled.details`

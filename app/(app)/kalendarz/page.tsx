@@ -1,11 +1,21 @@
 import { CardHeading, Glyph } from "@/components/glyphs";
-import { Card, DayCell, MonthGrid, MonthNav, TextLink } from "@/components/ui";
+import { Card, DayCell, DayPeople, MonthGrid, MonthNav, TextLink } from "@/components/ui";
 import { RequestTable } from "@/components/RequestTable";
 import { requireEmployee } from "@/lib/auth/session";
 import { addUtcDays, formatIsoDate, nextMonth, parseIsoDate, previousMonth, todayInWarsaw } from "@/lib/leave/dates";
-import { loadCalendar } from "@/lib/leave/views";
+import { loadCalendar, type RequestListItem } from "@/lib/leave/views";
 
 type Props = { searchParams: Promise<{ month?: string }> };
+
+function peopleOnDay(items: RequestListItem[], day: string): { id: string; name: string }[] {
+  const seen = new Map<string, string>();
+  for (const item of items) {
+    if (item.dateFrom <= day && item.dateTo >= day) seen.set(item.employeeId, item.ownerName);
+  }
+  return [...seen.entries()]
+    .map(([id, name]) => ({ id, name }))
+    .sort((a, b) => a.name.localeCompare(b.name, "pl"));
+}
 
 function monthCells(from: string, to: string): (string | null)[] {
   const start = parseIsoDate(from);
@@ -56,11 +66,24 @@ export default async function CalendarPage({ searchParams }: Props) {
           <strong key={day}>{day}</strong>
         ))}
         {cells.map((day, index) => {
-          const count = day ? data.items.filter((item) => item.dateFrom <= day && item.dateTo >= day).length : 0;
+          const people = day ? peopleOnDay(data.items, day) : [];
           return (
-            <DayCell key={`${day ?? "empty"}-${index}`}>
+            <DayCell
+              key={`${day ?? "empty"}-${index}`}
+              $busy={people.length > 0}
+              $alignEnd={index % 7 >= 5}
+              tabIndex={people.length > 0 ? 0 : undefined}
+              aria-label={people.length > 0 ? `Urlop: ${people.map((person) => person.name).join(", ")}` : undefined}
+            >
               {day ? day.slice(8) : ""}
-              {count > 0 ? ` · ${count}` : ""}
+              {people.length > 0 ? ` · ${people.length}` : ""}
+              {people.length > 0 ? (
+                <DayPeople aria-label="Osoby na urlopie">
+                  {people.map((person) => (
+                    <li key={person.id}>{person.name}</li>
+                  ))}
+                </DayPeople>
+              ) : null}
             </DayCell>
           );
         })}
