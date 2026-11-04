@@ -55,4 +55,4 @@ Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne O
 
 ## Ostatni status
 
-**2026-11-04:** Przycisk motywu na logowaniu ma tło karty, a nie przezroczyste. Pola logowania zostają przy szarym tle pól formularza. Następny krok to commit, jeśli te zmiany mają iść na produkcję.
+**2026-11-04:** Dodano `README.md` z technologiami, rolami i funkcjami obecnej wersji. Plik leży w katalogu głównym, więc GitHub pokaże go po wysłaniu na gałąź domyślną. Następny krok to commit i push, jeśli opis ma być widoczny w repozytorium.
