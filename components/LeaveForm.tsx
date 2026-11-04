@@ -2,8 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { DateField } from "@/components/DateField";
 import { Glyph } from "@/components/glyphs";
-import { Button, FormRow, Input, Notice, Readonly, RowActions, Select } from "@/components/ui";
+import { Button, FormRow, Notice, Readonly, RowActions, Select } from "@/components/ui";
 import { calendarDaysInclusive, countWorkingDays, formatPlDate, isNonWorkingDay, requiresDirector } from "@/lib/leave/dates";
 import { formatAmount, fullName, TYPE_LABEL } from "@/lib/leave/labels";
 import {
@@ -44,7 +45,6 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, today, ini
   const calendarDays = calendarDaysInclusive(dateFrom, dateTo);
   const workingDays = calendarDays === null ? null : countWorkingDays(dateFrom, dateTo, holidays);
   const director = calendarDays !== null && requiresDirector(calendarDays);
-  const plannedHours = workingDays === null ? null : workingDays * 8;
   const overLimit =
     leaveType === "saturday_comp"
       ? false
@@ -66,7 +66,17 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, today, ini
 
   function handleStart(value: string) {
     setDateFrom(value);
-    if (singleDay) setDateTo(value);
+    if (singleDay) {
+      setDateTo(value);
+      return;
+    }
+    // Koniec wcześniejszy niż nowy początek przestaje być terminem.
+    if (dateTo && value && dateTo < value) setDateTo("");
+  }
+
+  function handleEnd(value: string) {
+    if (dateFrom && value && value < dateFrom) return;
+    setDateTo(value);
   }
 
   async function handleSave(submit: boolean) {
@@ -98,9 +108,6 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, today, ini
     router.refresh();
   }
 
-  const hoursLabel =
-    plannedHours === null ? "Wybierz termin" : `${formatAmount(plannedHours)} h`;
-
   return (
     <div>
       {error ? <Notice $tone="danger">{error}</Notice> : null}
@@ -128,17 +135,17 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, today, ini
       {leaveType === "saturday_comp" ? (
         <FormRow>
           Dzień, w którym wykonywano pracę *
-          <Input type="date" value={workedDate} onChange={(event) => setWorkedDate(event.target.value)} required />
+          <DateField value={workedDate} onChange={setWorkedDate} required />
         </FormRow>
       ) : null}
       <FormRow>
         {singleDay ? (leaveType === "saturday_comp" ? "Proponowany dzień wolny *" : "Data *") : "Planowany urlop od *"}
-        <Input type="date" value={dateFrom} onChange={(event) => handleStart(event.target.value)} required />
+        <DateField value={dateFrom} onChange={handleStart} required />
       </FormRow>
       {singleDay ? null : (
         <FormRow>
           Planowany urlop do *
-          <Input type="date" value={dateTo} onChange={(event) => setDateTo(event.target.value)} required />
+          <DateField value={dateTo} min={dateFrom || undefined} onChange={handleEnd} required />
         </FormRow>
       )}
       <FormRow>
@@ -148,10 +155,6 @@ export function LeaveForm({ requestId, holidays, summary, colleagues, today, ini
             ? "Wybierz termin"
             : `${formatPlDate(dateFrom)} – ${formatPlDate(singleDay ? dateFrom : dateTo)}: ${workingDays} dni roboczych (${calendarDays} kalendarzowych)`}
         </Readonly>
-      </FormRow>
-      <FormRow>
-        Planowany czas urlopu w godzinach
-        <Readonly>{hoursLabel}</Readonly>
       </FormRow>
       <FormRow>
         Zastępca *

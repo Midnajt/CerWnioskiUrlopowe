@@ -117,6 +117,23 @@ export function formatPlDate(iso: string): string {
   return `${day}.${month}.${year}`;
 }
 
+/** Pole formularza zawsze pokazuje dzień/miesiąc/rok, niezależnie od lokalizacji przeglądarki. */
+export function formatSlashDate(iso: string): string {
+  if (!parseIsoDate(iso)) return "";
+  const [year, month, day] = iso.split("-");
+  return `${day}/${month}/${year}`;
+}
+
+/** Czyta dzień/miesiąc/rok z ukośnikiem, kropką albo myślnikiem. Zły dzień, np. 31/02/2026, odpada. */
+export function parseSlashDate(text: string): string | null {
+  const match = text.trim().match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);
+  if (!match) return null;
+  const day = match[1].padStart(2, "0");
+  const month = match[2].padStart(2, "0");
+  const iso = `${match[3]}-${month}-${day}`;
+  return parseIsoDate(iso) ? iso : null;
+}
+
 export function yearOf(iso: string): number | null {
   const date = parseIsoDate(iso);
   return date ? date.getUTCFullYear() : null;

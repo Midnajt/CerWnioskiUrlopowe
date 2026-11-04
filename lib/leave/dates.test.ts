@@ -6,8 +6,10 @@ import {
   calendarDaysInclusive,
   countWorkingDays,
   formatIsoDate,
+  formatSlashDate,
   isNonWorkingDay,
   parseIsoDate,
+  parseSlashDate,
   requiresDirector,
 } from "./dates";
 
@@ -69,6 +71,15 @@ test("dzień wolny to sobota, niedziela albo święto", () => {
   assert.equal(isNonWorkingDay(monday, []), false);
   assert.equal(isNonWorkingDay(monday, [monday]), true);
   assert.equal(isNonWorkingDay("2026-02-31", []), false);
+});
+
+test("pole daty czyta dzień/miesiąc/rok", () => {
+  assert.equal(formatSlashDate("2026-08-11"), "11/08/2026");
+  assert.equal(parseSlashDate("11/08/2026"), "2026-08-11");
+  assert.equal(parseSlashDate("11.08.2026"), "2026-08-11");
+  assert.equal(parseSlashDate("11-08-2026"), "2026-08-11");
+  assert.equal(parseSlashDate("31/02/2026"), null);
+  assert.equal(parseSlashDate("11/08"), null);
 });
 
 test("odwrócone i nieistniejące daty odpadają", () => {

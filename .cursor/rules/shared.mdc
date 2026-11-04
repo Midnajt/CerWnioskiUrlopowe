@@ -55,4 +55,4 @@ Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne O
 
 ## Ostatni status
 
-**2026-11-04:** Logowanie używa nowego `marketing-2.png` (603×529). Ikona wniosku z dołu karty zniknęła, a przed tytułem jest logo CM. Następny krok to commit i deploy, gdy ten wygląd ma wejść na Vercel.
+**2026-11-04:** Formularz wniosku pokazuje daty jako dzień/miesiąc/rok i nie pozwala wybrać końca urlopu wcześniejszego niż początek. Pole „Planowany czas urlopu w godzinach” zniknęło z formularza, a godziny nadal liczą się przy zapisie. Następny krok to commit, jeśli ta zmiana ma iść na produkcję.

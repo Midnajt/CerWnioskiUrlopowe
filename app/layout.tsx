@@ -3,6 +3,10 @@ import { AppTheme } from "@/components/AppTheme";
 import { StyledComponentsRegistry } from "@/lib/registry";
 
 function siteOrigin(): URL {
+  // Adres produkcyjny, nie VERCEL_URL. Adres konkretnego wdrożenia przekierowuje na logowanie Vercel,
+  // więc Teams widzi tytuł, a obrazka nie pobiera.
+  const production = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (production) return new URL(`https://${production}`);
   const vercel = process.env.VERCEL_URL;
   if (vercel) return new URL(`https://${vercel}`);
   return new URL("http://localhost:3000");
@@ -21,9 +25,9 @@ export const metadata: Metadata = {
     description: "Składanie i akceptacja urlopu wypoczynkowego.",
     images: [
       {
-        url: "/og.png",
-        width: 1254,
-        height: 1254,
+        url: "/marketing-2.png",
+        width: 603,
+        height: 529,
         type: "image/png",
         alt: "Wnioski urlopowe",
       },
