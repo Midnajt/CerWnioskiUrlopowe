@@ -136,9 +136,15 @@ export const Avatar = styled.div`
   display: grid;
   place-items: center;
   font-weight: 700;
-  background: ${({ theme }) => theme.mark};
   color: ${({ theme }) => theme.colors.white};
   flex: none;
+  /* Szkło jak pozycja menu na belce i cieńsza, świecąca obwódka znaczka. */
+  background: ${({ theme }) => theme.surface.menuGlass};
+  border: 1px solid ${({ theme }) => theme.mark};
+  box-shadow:
+    0 0 8px ${({ theme }) => theme.markAvatar.glow},
+    0 0 18px ${({ theme }) => theme.markAvatar.glowWide};
+  backdrop-filter: blur(14px) saturate(1.6);
 `;
 
 export const TileGrid = styled.div`
@@ -167,18 +173,22 @@ export const Tile = styled(Link)<{ $active?: boolean }>`
       transition: none;
     }
   }
-  ${({ $active, theme }) => css`
-    color: ${$active ? theme.colors.white : theme.surface.text};
-    background: ${$active ? theme.surface.action : theme.surface.tile};
-    border: 1.5px solid ${$active ? theme.surface.action : theme.surface.border};
-    svg {
-      color: ${$active ? theme.colors.white : theme.surface.icon};
-    }
-    &:hover {
-      background: ${$active ? theme.surface.action : theme.surface.card};
-      border-color: ${theme.surface.cardBorder};
-    }
-  `}
+  ${({ $active, theme }) => {
+    // Na turkusie #32D6D1 biały tekst znika, więc w ciemnym motywie napis i ikona są prawie czarne.
+    const activeInk = theme.mode === "dark" ? theme.colors.ink : theme.colors.white;
+    return css`
+      color: ${$active ? activeInk : theme.surface.text};
+      background: ${$active ? theme.surface.tileActive : theme.surface.tile};
+      border: 1.5px solid ${$active ? theme.surface.tileActive : theme.surface.tileBorder};
+      svg {
+        color: ${$active ? activeInk : theme.surface.icon};
+      }
+      &:hover {
+        background: ${$active ? theme.surface.tileActive : theme.surface.tile};
+        border-color: ${$active ? theme.surface.tileActive : theme.surface.cardBorder};
+      }
+    `;
+  }}
 `;
 
 export const TileLabel = styled.span`
@@ -207,6 +217,38 @@ export const CardTitle = styled.h2`
   gap: 8px;
   margin: 0 0 12px;
   font-size: 18px;
+`;
+
+/* Punkty w karcie pomocy: kreska oddziela kolejne role i kroki, strzałka wskazuje początek punktu. */
+export const PointList = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const Point = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 0;
+  & + & {
+    border-top: 1px solid ${({ theme }) => theme.surface.border};
+  }
+  p {
+    margin: 0;
+  }
+`;
+
+export const PointMark = styled.span`
+  color: ${({ theme }) => theme.surface.icon};
+  flex: none;
+  margin-top: 2px;
+  line-height: 1;
+`;
+
+export const PointClose = styled.p`
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid ${({ theme }) => theme.surface.border};
 `;
 
 export const TitleIcon = styled.span`
@@ -390,7 +432,8 @@ export const TextLink = styled(Link)`
   gap: 4px;
   vertical-align: middle;
   line-height: 1;
-  color: ${({ theme }) => theme.surface.link};
+  /* W ciemnym motywie napis linku jest turkusem kreski, tym samym co przycisk motywu, nie seledynem obwódki. */
+  color: ${({ theme }) => theme.surface.icon};
   font-weight: 600;
   svg {
     display: block;
@@ -420,13 +463,70 @@ export const Muted = styled.p`
   color: ${({ theme }) => theme.surface.muted};
 `;
 
-export const LoginCard = styled.main`
-  max-width: 420px;
-  margin: 10vh auto;
-  padding: 24px;
-  border-radius: 16px;
+// Jedna karta logowania: formularz i grafika stykają się w środku, róg zaokrągla całość.
+export const LoginStage = styled.div`
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 24px 72px;
+`;
+
+export const LoginShell = styled.div`
+  display: flex;
+  align-items: stretch;
+  width: min(1080px, 100%);
+  overflow: hidden;
+  border-radius: 24px;
   background: ${({ theme }) => theme.surface.card};
   border: 2px solid ${({ theme }) => theme.surface.cardBorder};
+  box-shadow: ${({ theme }) => theme.surface.headerShadow};
+  @media (max-width: 840px) {
+    flex-direction: column;
+  }
+`;
+
+export const LoginCard = styled.main`
+  flex: 1 1 42%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 32px 36px;
+  background: ${({ theme }) => theme.surface.card};
+  p {
+    margin: 0 0 16px;
+  }
+  form button {
+    width: 100%;
+    justify-content: center;
+  }
+  @media (max-width: 840px) {
+    padding: 28px 24px 32px;
+  }
+`;
+
+export const LoginPanel = styled.div`
+  flex: 1.35 1 58%;
+  position: relative;
+  min-width: 0;
+  /* Proporcja pliku marketing-2.png, żeby ikony nie były obcięte na krawędzi. */
+  aspect-ratio: 603 / 529;
+  background: ${({ theme }) => theme.colors.ink};
+  @media (max-width: 840px) {
+    flex: none;
+    order: -1;
+    width: 100%;
+  }
+`;
+
+export const LoginArt = styled.img`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 `;
 
 // Czarny pasek przy dolnej krawędzi ekranu, tylko na stronie logowania.
@@ -452,11 +552,20 @@ export const LoginTitle = styled.h1`
 `;
 
 export const LoginLogo = styled.img`
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   flex: none;
+`;
+
+export const LoginThemeSlot = styled.div`
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  button {
+    color: ${({ theme }) => (theme.mode === "dark" ? theme.surface.border : theme.surface.link)};
+  }
 `;
 
 export const MonthGrid = styled.div`

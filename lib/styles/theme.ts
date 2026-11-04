@@ -38,6 +38,8 @@ const darkChrome = {
   text: "#F5F5F5",
   muted: "#A3A3A3",
   line: "#32D6D1",
+  // Spokojna kreska kafelka, blisko szarości strony i płytki, bez turkusu.
+  tileLine: "#3A3A3A",
   headerFrost: "rgb(28 28 28 / 85%)",
 };
 
@@ -57,6 +59,12 @@ export const hero = {
 
 const mark = "#D92D59";
 
+// Poświata obwódki awatara. Tło koła bierze szkło menu z surface.menuGlass.
+const markAvatar = {
+  glow: "rgb(217 45 89 / 90%)",
+  glowWide: "rgb(217 45 89 / 48%)",
+};
+
 export type ThemeMode = "light" | "dark";
 
 function buildTheme(mode: ThemeMode) {
@@ -67,6 +75,7 @@ function buildTheme(mode: ThemeMode) {
     fonts,
     hero,
     mark,
+    markAvatar,
     // Ciemny pulpit bierze szarości z darkChrome. Ikona jest turkusem kreski, obwódka karty i link zostają przy teal500.
     surface: {
       page: dark ? darkChrome.page : lightChrome.page,
@@ -80,6 +89,8 @@ function buildTheme(mode: ThemeMode) {
       icon: dark ? darkChrome.line : lightChrome.blue,
       input: dark ? darkChrome.input : lightChrome.card,
       tile: dark ? darkChrome.tile : lightChrome.tile,
+      tileBorder: dark ? darkChrome.tileLine : lightChrome.line,
+      tileActive: dark ? darkChrome.line : lightChrome.blue,
       ok: dark ? colors.green500 : lightChrome.green,
       warn: dark ? colors.accent : lightChrome.orange,
       okWash: dark ? darkChrome.raised : lightChrome.greenWash,

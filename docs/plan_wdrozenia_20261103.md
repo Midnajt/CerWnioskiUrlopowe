@@ -17,13 +17,13 @@ Obecna wersja produkcyjna obsługuje:
 
 ## Wygląd pulpitu — przyjęty 2026-11-04
 
-Jasny pulpit jest przyjęty. Nie wracać do zielonego gradientu powitania ani do pomarańczowej belki ze zrzutów SunCode. Ciemny motyw, przyjęty 2026-11-04, ma szare tło `#1C1C1C` i karty `#262626`. Seledyn `#57A49E` jest obwódką, linkiem i ikoną. Aktywny kafelek bierze `#2A6B71`.
+Jasny pulpit jest przyjęty. Nie wracać do zielonego gradientu powitania ani do pomarańczowej belki ze zrzutów SunCode. Ciemny motyw, przyjęty 2026-11-04, ma szare tło `#1C1C1C` i karty `#262626`. Seledyn `#57A49E` jest obwódką karty i obwódką kafelka po najechaniu. Ikony i napisy linków zostają przy `#32D6D1`. Kafelek w spoczynku ma szarą obwódkę `#3A3A3A`, a aktywny bierze tło `#32D6D1`.
 
 Belka powitania (`Welcome` w `components/ui.tsx`, mgła w `components/WelcomeFog.tsx`) zostaje w tej postaci:
 
 - Zaczyna się od górnej krawędzi ekranu, na pełną szerokość, z zaokrąglonym dołem.
 - Tło to ruchoma mgła (Vanta FOG, `speed` 2, pakiety `three` i `vanta`). Barwy są w `theme.hero`.
-- Treść: „Cześć” i imię, liczba zadań do wykonania, awatar z inicjałami. Awatar i plakietka „NOWE” mają kolor `theme.mark` (`#D92D59`).
+- Treść: „Cześć” i imię, liczba zadań do wykonania, awatar z inicjałami. Plakietka „NOWE” ma kolor `theme.mark` (`#D92D59`). Awatar ma szkło menu i cienką świecącą obwódkę w tym samym czerwonym.
 
 Menu (`TopBar` w `components/AppShell.tsx`):
 

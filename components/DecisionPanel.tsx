@@ -57,7 +57,7 @@ export function DecisionPanel({ requestId, actor, colleagues, currentSubstituteI
             <option value="">Wybierz osobę</option>
             {colleagues.map((person) => (
               <option key={person.id} value={person.id}>
-                {fullName(person)} — {person.jobTitle}
+                {fullName(person)}
               </option>
             ))}
           </Select>

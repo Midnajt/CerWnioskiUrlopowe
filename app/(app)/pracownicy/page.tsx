@@ -32,11 +32,7 @@ export default async function StaffPage() {
           <tbody>
             {rows.map(({ person, summary }) => (
               <tr key={person.id}>
-                <td>
-                  {fullName(person)}
-                  {person.isDirector ? " · dyrektor" : ""}
-                  {person.isHr ? " · kadry" : ""}
-                </td>
+                <td>{fullName(person)}</td>
                 <td>{person.departmentName}</td>
                 <td>{summary.current ? formatAmount(summary.current.remaining) : "—"}</td>
                 <td>{formatAmount(summary.onDemand.remaining)}</td>

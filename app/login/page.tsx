@@ -1,5 +1,16 @@
 import { LoginForm } from "@/components/LoginForm";
-import { LoginCard, LoginDemo, LoginLogo, LoginTitle } from "@/components/ui";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import {
+  LoginArt,
+  LoginCard,
+  LoginDemo,
+  LoginLogo,
+  LoginPanel,
+  LoginShell,
+  LoginStage,
+  LoginThemeSlot,
+  LoginTitle,
+} from "@/components/ui";
 
 type Props = { searchParams: Promise<{ error?: string }> };
 
@@ -12,14 +23,24 @@ export default async function LoginPage({ searchParams }: Props) {
   const initialError = params.error ? (ERRORS[params.error] ?? null) : null;
   return (
     <>
-      <LoginCard>
-        <LoginTitle>
-          <LoginLogo src="/cm_logo.png" alt="Logo CerMotor" width={64} height={64} />
-          <span>Wnioski urlopowe</span>
-        </LoginTitle>
-        <p>Zaloguj się, aby złożyć albo zaakceptować wniosek.</p>
-        <LoginForm initialError={initialError} />
-      </LoginCard>
+      <LoginThemeSlot>
+        <ThemeToggle iconOnly />
+      </LoginThemeSlot>
+      <LoginStage>
+        <LoginShell>
+          <LoginCard>
+            <LoginTitle>
+              <LoginLogo src="/cm_logo.png" alt="Cer Motor" width={40} height={40} />
+              Wnioski urlopowe
+            </LoginTitle>
+            <p>Zaloguj się, aby złożyć albo zaakceptować wniosek.</p>
+            <LoginForm initialError={initialError} />
+          </LoginCard>
+          <LoginPanel aria-hidden="true">
+            <LoginArt src="/marketing-2.png" alt="" />
+          </LoginPanel>
+        </LoginShell>
+      </LoginStage>
       <LoginDemo>wersja demonstracyjna</LoginDemo>
     </>
   );

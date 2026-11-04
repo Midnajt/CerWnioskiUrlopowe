@@ -54,7 +54,7 @@ export function AppShell({ me, taskCount, showTeam, children }: Props) {
       <TopBar $scrolled={scrolled}>
         <BarInner>
           <Brand href="/">
-            <BrandLogo src="/cm_logo.png" alt="CerMotor" width={32} height={32} />
+            <BrandLogo src="/og.png" alt="Wnioski urlopowe" width={32} height={32} />
             Wnioski urlopowe
           </Brand>
           <TopActions $ghost={!scrolled}>
