@@ -35,8 +35,9 @@ export default async function LeaveRequestPage({ params }: Props) {
 
   return (
     <Card>
-      <Muted>Nazwa procesu: Wniosek urlopowy {request.requestNumber}</Muted>
-      <CardHeading name="form">Zadanie: {actor ? "Akceptacja wniosku" : "Wniosek urlopowy"}</CardHeading>
+      <CardHeading name="form">
+        Zadanie: {actor ? "Akceptacja wniosku" : "Wniosek urlopowy"} {request.requestNumber}
+      </CardHeading>
       <FormRow>
         Wnioskujący
         <Readonly>
@@ -59,9 +60,6 @@ export default async function LeaveRequestPage({ params }: Props) {
             dateFrom: request.dateFrom,
             dateTo: request.dateTo,
             substituteId: request.substituteEmployeeId ?? "",
-            fullDay: request.fullDay,
-            timeFrom: request.timeFrom ?? "",
-            timeTo: request.timeTo ?? "",
             workedDate: request.workedDate ?? "",
           }}
         />

@@ -41,7 +41,8 @@ export function WelcomeFog() {
           lowlightColor: hexToInt(theme.hero.lowlight),
           baseColor: hexToInt(theme.hero.base),
           blurFactor: 0.6,
-          speed: 1.2,
+          // Trochę szybciej niż 1, żeby ruch mgły był wyraźniejszy na belce.
+          speed: 2,
           zoom: 0.8,
           scale: 2,
           scaleMobile: 4,

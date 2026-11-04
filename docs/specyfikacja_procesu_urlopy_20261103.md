@@ -547,7 +547,7 @@ Kafelek jest zaokrąglonym kwadratem. Etykieta jest u góry, ikona na dole, licz
 
 Układ z `example2.png`. Biała strona, etykieta po lewej, pole po prawej.
 
-Nagłówek: po lewej „Nazwa procesu: Wniosek urlopowy” i numer procesu, po prawej „Zadanie: Wnioskowanie o urlop”.
+Nagłówek: „Zadanie: Wnioskowanie o urlop”. Napisu „Nazwa procesu” nie ma.
 
 **Dane wniosku** — pola tylko do odczytu, szare tło: identyfikator wniosku, data wniosku, wnioskujący.
 
@@ -555,9 +555,8 @@ Nagłówek: po lewej „Nazwa procesu: Wniosek urlopowy” i numer procesu, po p
 
 - rodzaj urlopu (lista, pole wymagane) oraz niebieski przycisk z obrysem „Dostępne dni urlopowe”,
 - planowany urlop od i do (kalendarz, oba wymagane),
-- planowany czas urlopu w dniach oraz pole „Cały dzień”,
-- godzina od i do, gdy urlop nie obejmuje całego dnia,
-- planowany czas urlopu w godzinach (wyliczany, tylko do odczytu),
+- planowany czas urlopu w dniach,
+- planowany czas urlopu w godzinach (wyliczany z dni roboczych, tylko do odczytu). Urlop jest zawsze co najmniej jednodniowy, bez przełącznika „Cały dzień” i bez godzin od–do,
 - zastępca — lista z wyszukiwaniem po imieniu i nazwisku.
 
 Akcje procesu stoją po prawej, w jednym rzędzie ze zastępcą. Są to przyciski z kolorowym tekstem i obrysem, bez pełnego wypełnienia:

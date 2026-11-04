@@ -37,7 +37,7 @@ Rola nie siedzi w tokenie: pracownik jest rekordem, przełożony wynika z `manag
 - Dni robocze: soboty, niedziele i święta z tabeli. Jeden kalendarz firmy.
 - Konta, struktura, limity i święta: `npm run seed`. Panelu administratora nie ma.
 - Powiadomienia tylko w aplikacji.
-- Układ pulpitu: belka powitania z ruchomą mgłą, od górnej krawędzi ekranu, zostaje. Szczegóły w `frontend.mdc` i w `docs/plan_wdrozenia_20261103.md`. Jasny pulpit używa `theme.surface`, `theme.hero` i `theme.mark` (`#D92D59` na awatarze i plakietce „NOWE”). Ciemny motyw zostaje przy 12 próbkach `theme.colors`. Nie wracać do zielonego gradientu ani do pomarańczowej belki ze zrzutów.
+- Układ pulpitu: belka powitania z ruchomą mgłą, od górnej krawędzi ekranu, zostaje. Szczegóły w `frontend.mdc` i w `docs/plan_wdrozenia_20261103.md`. Jasny pulpit używa `theme.surface` (strona `#F8FAFC`, karty `#FFFFFF`, niebieski `#2563EB`, zieleń `#16A34A` i pomarańcz `#EA580C` na komunikatach i przyciskach), `theme.hero` i `theme.mark` (`#D92D59` na awatarze i plakietce „NOWE”). Ciemny motyw zostaje przy 12 próbkach `theme.colors`. Nie wracać do zielonego gradientu ani do pomarańczowej belki ze zrzutów.
 
 ## Później, nie budować teraz
 
@@ -55,4 +55,4 @@ Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne O
 
 ## Ostatni status
 
-**2026-11-04:** Plan wdrożenia i reguły zapisują przyjęty jasny pulpit, w tym belkę powitania z ruchomą mgłą. Kod belki zostaje bez zmian. Następny krok to osobna decyzja o ciemnym motywie.
+**2026-11-04:** Strona logowania nie ma napisu CerMotor, karta ma niebieską obwódkę, a na dole jest pasek „wersja demonstracyjna”. Kafelki i formularz zostają jak poprzednio. Następny krok to osobna decyzja o ciemnym motywie.

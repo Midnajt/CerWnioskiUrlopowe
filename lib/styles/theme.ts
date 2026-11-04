@@ -13,13 +13,19 @@ export const colors = {
   white: "#F9F9F9",
 };
 
-// Jasny pulpit: szare karty i niebieski obrys, poza dwunastoma próbkami.
+// Jasny pulpit: biel kart na tle łupkowym i niebieski akcent, poza dwunastoma próbkami.
 const lightChrome = {
-  page: "#FFFFFF",
-  card: "#F3F4F6",
-  line: "#DEE2E6",
-  blue: "#0D6EFD",
+  page: "#F8FAFC",
+  card: "#FFFFFF",
   tile: "#FFFFFF",
+  text: "#0F172A",
+  muted: "#64748B",
+  line: "#E2E8F0",
+  blue: "#2563EB",
+  green: "#16A34A",
+  orange: "#EA580C",
+  greenWash: "#F0FDF4",
+  orangeWash: "#FFF7ED",
 };
 
 const fonts = {
@@ -42,25 +48,30 @@ export type ThemeMode = "light" | "dark";
 
 function buildTheme(mode: ThemeMode) {
   const dark = mode === "dark";
-    return {
+  return {
     mode,
     colors,
     fonts,
     hero,
     mark,
-    // Ciemny motyw zostaje przy dwunastu próbkach. Jasny dostaje szarość i niebieski.
+    // Ciemny motyw zostaje przy dwunastu próbkach. Jasny dostaje łupek, biel i niebieski.
     surface: {
       page: dark ? colors.green950 : lightChrome.page,
       card: dark ? colors.green900 : lightChrome.card,
-      raised: dark ? colors.green800 : colors.cream,
-      text: dark ? colors.cream : colors.ink,
-      muted: dark ? colors.teal500 : colors.green800,
+      raised: dark ? colors.green800 : lightChrome.page,
+      text: dark ? colors.cream : lightChrome.text,
+      muted: dark ? colors.teal500 : lightChrome.muted,
       border: dark ? colors.teal500 : lightChrome.line,
       cardBorder: dark ? colors.teal500 : lightChrome.blue,
       link: dark ? colors.cyan : lightChrome.blue,
       icon: dark ? colors.cyan : lightChrome.blue,
-      input: dark ? colors.green800 : colors.white,
+      input: dark ? colors.green800 : lightChrome.card,
       tile: dark ? colors.green800 : lightChrome.tile,
+      ok: dark ? colors.green500 : lightChrome.green,
+      warn: dark ? colors.accent : lightChrome.orange,
+      okWash: dark ? colors.green900 : lightChrome.greenWash,
+      warnWash: dark ? colors.green800 : lightChrome.orangeWash,
+      action: dark ? colors.teal800 : lightChrome.blue,
       headerFrost: dark ? "rgb(17 40 14 / 85%)" : "rgb(255 255 255 / 85%)",
       headerLine: "rgb(255 255 255 / 55%)",
       headerShadow: "0 8px 24px rgb(7 8 3 / 12%)",

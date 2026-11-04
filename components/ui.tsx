@@ -62,12 +62,14 @@ export const TopActions = styled.div<{ $ghost?: boolean }>`
     `}
 `;
 
-export const Brand = styled.p`
+export const Brand = styled(Link)`
   display: flex;
   align-items: center;
   gap: 8px;
   margin: 0;
   font-weight: 700;
+  text-decoration: none;
+  color: inherit;
 `;
 
 export const BrandLogo = styled.img`
@@ -140,7 +142,7 @@ export const TileGrid = styled.div`
 
 const tileTones = ["accent", "teal800", "green700", "teal500", "green800"] as const;
 
-export const Tile = styled(Link)<{ $index: number }>`
+export const Tile = styled(Link)<{ $index: number; $active?: boolean }>`
   min-height: 140px;
   padding: 14px;
   border-radius: 16px;
@@ -148,22 +150,34 @@ export const Tile = styled(Link)<{ $index: number }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  ${({ $index, theme }) =>
+  /* Tło aktywnego kafelka i obwódka po najechaniu wchodzą, a nie przeskakują. */
+  transition: background-color 0.18s ease-out, color 0.18s ease-out, border-color 0.18s ease-out, box-shadow 0.18s ease-out;
+  svg {
+    transition: color 0.18s ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    svg {
+      transition: none;
+    }
+  }
+  ${({ $index, $active, theme }) =>
     theme.mode === "dark"
       ? css`
           color: ${theme.colors.white};
           background: ${theme.colors[tileTones[$index % tileTones.length]]};
-          border: 1.5px solid transparent;
+          border: 1.5px solid ${$active ? theme.colors.white : "transparent"};
+          box-shadow: ${$active ? `inset 0 0 0 1px ${theme.colors.white}` : "none"};
         `
       : css`
-          color: ${theme.surface.text};
-          background: ${theme.surface.tile};
-          border: 1.5px solid ${theme.surface.border};
+          color: ${$active ? theme.colors.white : theme.surface.text};
+          background: ${$active ? theme.surface.action : theme.surface.tile};
+          border: 1.5px solid ${$active ? theme.surface.action : theme.surface.border};
           svg {
-            color: ${theme.surface.icon};
+            color: ${$active ? theme.colors.white : theme.surface.icon};
           }
           &:hover {
-            background: ${theme.surface.card};
+            background: ${$active ? theme.surface.action : theme.surface.card};
             border-color: ${theme.surface.cardBorder};
           }
         `}
@@ -262,7 +276,7 @@ const field = css`
 export const Check = styled.input`
   width: 18px;
   height: 18px;
-  accent-color: ${({ theme }) => theme.colors.green700};
+  accent-color: ${({ theme }) => theme.surface.ok};
 `;
 
 export const Input = styled.input`
@@ -300,18 +314,21 @@ export const Button = styled.button<{ $tone?: "ok" | "danger" | "neutral"; $fill
   gap: 8px;
   background: ${({ $fill, $tone, theme }) => {
     if (!$fill) return "transparent";
-    return $tone === "danger" ? theme.colors.accent : theme.colors.teal800;
+    if ($tone === "danger") return theme.surface.warn;
+    if ($tone === "ok") return theme.surface.ok;
+    return theme.surface.action;
   }};
   color: ${({ $fill, $tone, theme }) => {
     if ($fill) return theme.colors.white;
-    if ($tone === "ok") return theme.colors.green500;
-    if ($tone === "danger") return theme.colors.accent;
+    if ($tone === "ok") return theme.surface.ok;
+    if ($tone === "danger") return theme.surface.warn;
     return theme.surface.link;
   }};
   border: 1.5px solid
-    ${({ $tone, theme }) => {
-      if ($tone === "ok") return theme.colors.green500;
-      if ($tone === "danger") return theme.colors.accent;
+    ${({ $fill, $tone, theme }) => {
+      if ($tone === "ok") return theme.surface.ok;
+      if ($tone === "danger") return theme.surface.warn;
+      if ($fill) return theme.surface.action;
       return theme.surface.border;
     }};
   border-radius: 8px;
@@ -387,9 +404,9 @@ export const Notice = styled.p<{ $tone?: "danger" | "ok" }>`
   margin: 0 0 12px;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1.5px solid ${({ theme }) => theme.surface.border};
-  background: ${({ theme }) => theme.colors.cream};
-  color: ${({ $tone, theme }) => ($tone === "ok" ? theme.colors.green700 : theme.colors.accent)};
+  border: 1.5px solid ${({ $tone, theme }) => ($tone === "ok" ? theme.surface.ok : theme.surface.warn)};
+  background: ${({ $tone, theme }) => ($tone === "ok" ? theme.surface.okWash : theme.surface.warnWash)};
+  color: ${({ $tone, theme }) => ($tone === "ok" ? theme.surface.ok : theme.surface.warn)};
 `;
 
 export const Muted = styled.p`
@@ -403,7 +420,21 @@ export const LoginCard = styled.main`
   padding: 24px;
   border-radius: 16px;
   background: ${({ theme }) => theme.surface.card};
-  border: 2px solid ${({ theme }) => theme.surface.border};
+  border: 2px solid ${({ theme }) => theme.surface.cardBorder};
+`;
+
+// Czarny pasek przy dolnej krawędzi ekranu, tylko na stronie logowania.
+export const LoginDemo = styled.footer`
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  padding: 10px 16px;
+  background: ${({ theme }) => theme.colors.ink};
+  color: ${({ theme }) => theme.colors.white};
+  text-align: center;
+  font-size: 14px;
 `;
 
 export const LoginTitle = styled.h1`
@@ -445,7 +476,7 @@ export const FilterDetails = styled.details`
     gap: 8px;
     cursor: pointer;
     list-style: none;
-    background: ${({ theme }) => theme.colors.teal800};
+    background: ${({ theme }) => theme.surface.action};
     color: ${({ theme }) => theme.colors.white};
     border-radius: 8px;
     padding: 8px 14px;

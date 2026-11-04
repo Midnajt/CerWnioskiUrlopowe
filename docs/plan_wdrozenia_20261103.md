@@ -22,7 +22,7 @@ Jasny pulpit jest przyjęty. Nie wracać do zielonego gradientu powitania ani do
 Belka powitania (`Welcome` w `components/ui.tsx`, mgła w `components/WelcomeFog.tsx`) zostaje w tej postaci:
 
 - Zaczyna się od górnej krawędzi ekranu, na pełną szerokość, z zaokrąglonym dołem.
-- Tło to ruchoma mgła (Vanta FOG, pakiety `three` i `vanta`). Barwy są w `theme.hero`.
+- Tło to ruchoma mgła (Vanta FOG, `speed` 2, pakiety `three` i `vanta`). Barwy są w `theme.hero`.
 - Treść: „Cześć” i imię, liczba zadań do wykonania, awatar z inicjałami. Awatar i plakietka „NOWE” mają kolor `theme.mark` (`#D92D59`).
 
 Menu (`TopBar` w `components/AppShell.tsx`):
@@ -31,7 +31,7 @@ Menu (`TopBar` w `components/AppShell.tsx`):
 - Po lewej logo CerMotor bez białej płytki i cienia oraz napis „Wnioski urlopowe”.
 - Po prawej przełącznik motywu i menu z imieniem i nazwiskiem. „Wyloguj” ma ten sam rozmiar co przycisk z imieniem: szkło, gdy leży na belce powitania, białe tło po przewinięciu.
 
-Reszta jasnego pulpitu: karty z tłem `#F3F4F6` i obwódką `#0D6EFD`, kafelki jak białe przyciski. Przyciski ostrzeżeń zostają przy cegle `accent`.
+Reszta jasnego pulpitu: strona `#F8FAFC`, karty białe z obwódką `#2563EB`, kafelki jak białe przyciski. Komunikaty i przyciski sukcesu używają zieleni `#16A34A`, ostrzeżenia i błędy pomarańczu `#EA580C`. Treść pod kafelkami zmienia się krótką animacją w `components/PageTransition.tsx`.
 
 ## Kolejność etapów
 
@@ -61,7 +61,7 @@ Sekcje specyfikacji: 3, 4, 6, 9, 11, wygląd formularza.
    - Dynamiczna sekcja w `components/LeaveForm.tsx` pokazująca kalendarz dnia przepracowanego i proponowanego dnia wolnego.
 3. **Nieobecności w wymiarze godzinowym / niepełny dzień (sekcje 6, 9, 10, wygląd formularza)**
    - Rozbudowa `leave_requests` o pola `full_day` (boolean), `time_from`, `time_to`, `planned_hours` (numeric).
-   - Przełącznik „Cały dzień" w `components/LeaveForm.tsx` oraz automatyczne wyliczanie godzin, gdy odznaczono cały dzień.
+   - Godziny w danych zostają. Formularz zawsze zapisuje cały dzień, bo urlop jest co najmniej jednodniowy. Przełącznika „Cały dzień” nie ma.
 
 ## Etap 2: Wnioski rodzinne, okolicznościowe, bezpłatne oraz obsługa załączników
 
