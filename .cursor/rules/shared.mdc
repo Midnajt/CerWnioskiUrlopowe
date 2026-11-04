@@ -55,4 +55,4 @@ Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne O
 
 ## Ostatni status
 
-**2026-11-04:** Dodano `README.md` z technologiami, rolami i funkcjami obecnej wersji. Plik leży w katalogu głównym, więc GitHub pokaże go po wysłaniu na gałąź domyślną. Następny krok to commit i push, jeśli opis ma być widoczny w repozytorium.
+**2026-11-04:** W `README.md` jest informacja, że kod powstaje w Cursorze z modelami językowymi. Opis leży w tabeli technologii i w osobnej sekcji. Następny krok to commit i push, jeśli ta wzmianka ma być widoczna na GitHubie.

@@ -15,8 +15,13 @@ Obecna wersja to MVP plus urlop na żądanie i odbiór dnia wolnego za pracę w 
 | 🗄️ Dane | Supabase Postgres, region EU. Odczyt i zapis tylko po stronie serwera |
 | 🚀 Wdrożenie | jeden projekt na Vercel |
 | 🧪 Testy | wbudowany runner Node (`node:test`) przez `tsx` |
+| 🤖 Kod | [Cursor](https://cursor.com/) i modele językowe (LLM) |
 
 Przeglądarka nie łączy się z Supabase. Strony czytają dane na serwerze, a formularze wołają własne endpointy `/api`.
+
+## 🤖 Cursor i AI
+
+Kod tej aplikacji powstaje w edytorze [Cursor](https://cursor.com/) z wykorzystaniem modeli językowych. Asystent AI pisze i poprawia kod na podstawie poleceń, a zakres funkcji i akceptacja zmian zostają po stronie zespołu.
 
 ## 👥 Role
 
