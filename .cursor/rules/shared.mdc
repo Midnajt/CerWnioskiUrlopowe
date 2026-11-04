@@ -37,7 +37,7 @@ Rola nie siedzi w tokenie: pracownik jest rekordem, przełożony wynika z `manag
 - Dni robocze: soboty, niedziele i święta z tabeli. Jeden kalendarz firmy.
 - Konta, struktura, limity i święta: `npm run seed`. Panelu administratora nie ma.
 - Powiadomienia tylko w aplikacji.
-- Układ pulpitu i formularza ze specyfikacji. Kolory wyłącznie z 12 próbek `theme.colors`.
+- Układ pulpitu: belka powitania z ruchomą mgłą, od górnej krawędzi ekranu, zostaje. Szczegóły w `frontend.mdc` i w `docs/plan_wdrozenia_20261103.md`. Jasny pulpit używa `theme.surface`, `theme.hero` i `theme.mark` (`#D92D59` na awatarze i plakietce „NOWE”). Ciemny motyw zostaje przy 12 próbkach `theme.colors`. Nie wracać do zielonego gradientu ani do pomarańczowej belki ze zrzutów.
 
 ## Później, nie budować teraz
 
@@ -55,4 +55,4 @@ Express, Vite jako shell, Pages Router, Tailwind, Shadcn, Radix, Prisma i inne O
 
 ## Ostatni status
 
-**2026-11-03:** W planie wdrożenia odnotowano, że Etap 1 jest wykonany, łącznie z migracją uruchomioną w Supabase. Kod jest na gałęzi `main` lokalnie i wejdzie na produkcję po pushu na GitHub. Następny krok to osobne polecenie „Wdróż Etap 2 z planu".
+**2026-11-04:** Plan wdrożenia i reguły zapisują przyjęty jasny pulpit, w tym belkę powitania z ruchomą mgłą. Kod belki zostaje bez zmian. Następny krok to osobna decyzja o ciemnym motywie.

@@ -4,7 +4,7 @@ Data: 2026-11-03.
 
 Dokument opisuje drogę od wersji 1.0 (MVP) do pełnej specyfikacji w `docs/specyfikacja_procesu_urlopy_20261103.md`. Funkcjonalności wchodzą etapami, po trzy na raz. Ten plik jest planem pracy. Samo jego zapisanie nie wdraża kolejnych etapów.
 
-Etap 1 został wykonany 2026-11-03: kod jest w repozytorium, a migracja `supabase/migrations/20261103150000_stage1_short_leaves_and_hours.sql` została uruchomiona w Supabase. Kolejny etap uruchamia się osobno, na przykład poleceniem: „Wdróż Etap 2 z planu".
+Etap 1 został wykonany 2026-11-03: kod jest w repozytorium, a migracja `supabase/migrations/20261103150000_stage1_short_leaves_and_hours.sql` została uruchomiona w Supabase. Wygląd jasnego pulpitu, z belką powitania, został przyjęty 2026-11-04. Kolejny etap uruchamia się osobno, na przykład poleceniem: „Wdróż Etap 2 z planu".
 
 ## Stan bazowy (wersja 1.0 MVP — gotowa)
 
@@ -14,6 +14,24 @@ Obecna wersja produkcyjna obsługuje:
 - Wnioski: urlop wypoczynkowy bieżący (`current`) oraz zaległy (`overdue`, najstarszy rok pierwszy).
 - Ścieżkę akceptacji: pracownik → przełożony → dyrektor (gdy więcej niż 21 dni kalendarzowych) → kadry, z wycofaniem przed zatwierdzeniem.
 - Zastępstwa osób wnioskujących i akceptujących, kalendarz dni roboczych ze świętami z tabeli `public_holidays`, ostrzeżenia o kolizjach w zespole oraz powiadomienia wewnątrz aplikacji.
+
+## Wygląd pulpitu — przyjęty 2026-11-04
+
+Jasny pulpit jest przyjęty. Nie wracać do zielonego gradientu powitania ani do pomarańczowej belki ze zrzutów SunCode. Ciemny motyw nie był przebudowywany.
+
+Belka powitania (`Welcome` w `components/ui.tsx`, mgła w `components/WelcomeFog.tsx`) zostaje w tej postaci:
+
+- Zaczyna się od górnej krawędzi ekranu, na pełną szerokość, z zaokrąglonym dołem.
+- Tło to ruchoma mgła (Vanta FOG, pakiety `three` i `vanta`). Barwy są w `theme.hero`.
+- Treść: „Cześć” i imię, liczba zadań do wykonania, awatar z inicjałami. Awatar i plakietka „NOWE” mają kolor `theme.mark` (`#D92D59`).
+
+Menu (`TopBar` w `components/AppShell.tsx`):
+
+- Leży na belce. Na górze strony jest przezroczyste, napisy są jasne. Po przewinięciu zostaje przyklejone i dostaje mlecznobiałe tło.
+- Po lewej logo CerMotor bez białej płytki i cienia oraz napis „Wnioski urlopowe”.
+- Po prawej przełącznik motywu i menu z imieniem i nazwiskiem. „Wyloguj” ma ten sam rozmiar co przycisk z imieniem: szkło, gdy leży na belce powitania, białe tło po przewinięciu.
+
+Reszta jasnego pulpitu: karty z tłem `#F3F4F6` i obwódką `#0D6EFD`, kafelki jak białe przyciski. Przyciski ostrzeżeń zostają przy cegle `accent`.
 
 ## Kolejność etapów
 
@@ -82,9 +100,10 @@ Sekcje specyfikacji: 27, 29, wygląd strony (pulpit i formularz).
    - Pole `parent_request_id` oraz rodzaj operacji (`change` / `cancel`) w `leave_requests`, a także status `anulowany`.
    - Przycisk „Złóż wniosek o zmianę / anulowanie nieobecności" na widoku zaakceptowanego wniosku (`app/(app)/wnioski/[id]/page.tsx`).
    - Pełna historia pierwotnego wniosku oraz przeliczenie puli limitu po ostatecznej akceptacji anulowania albo zmiany.
-2. **Pulpit i kafelki według sekcji „Wygląd strony"**
-   - Widok i kafelki „Moje zastępstwa" / „Moje przyszłe zastępstwa" z licznikiem oraz „Załączniki" w `components/AppShell.tsx`.
-   - Plakietka „NOWE" przy nowych zadaniach w `components/RequestTable.tsx`, filtry tabeli oraz paginacja z podsumowaniem „Wyświetlono X–Y z Z".
+2. **Listy pulpitu, bez zmiany przyjętej belki**
+   - Belka powitania, menu i kolory jasnego pulpitu są przyjęte (sekcja „Wygląd pulpitu — przyjęty 2026-11-04”). Nie zastępować ich układem pomarańczowym ze zrzutów.
+   - Do dodania, gdy wejdą załączniki i zastępstwa jako osobne widoki: kafelki „Moje zastępstwa”, „Moje przyszłe zastępstwa” oraz „Załączniki”.
+   - Paginacja z tekstem „Wyświetlono X–Y z Z” tam, gdzie lista jest dłuższa niż jedna strona. Plakietka „NOWE” już jest.
 3. **Formularz wniosku według sekcji „Wygląd strony"**
    - Sekcja „Dane wniosku" tylko do odczytu (identyfikator, data wniosku, wnioskujący) na górze formularza.
    - Panel „Dostępne dni urlopowe", wyszukiwarka zastępcy po imieniu i nazwisku oraz przycisk „Dodaj nowy komentarz" z poziomu formularza.

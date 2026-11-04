@@ -3,47 +3,115 @@
 import Link from "next/link";
 import styled, { css } from "styled-components";
 
+export const Shell = styled.div`
+  --header-h: 72px;
+  min-height: 100vh;
+`;
+
 export const Frame = styled.div`
   max-width: 1100px;
   margin: 0 auto;
-  padding: 16px 20px 48px;
+  padding: 0 20px 48px;
 `;
 
-export const TopBar = styled.header`
+export const TopBar = styled.header<{ $scrolled: boolean }>`
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: var(--header-h);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid ${({ theme }) => theme.surface.border};
+  color: ${({ theme }) => theme.colors.white};
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+  ${({ $scrolled, theme }) =>
+    $scrolled &&
+    css`
+      color: ${theme.surface.text};
+      background: ${theme.surface.headerFrost};
+      backdrop-filter: blur(14px) saturate(1.8);
+      border-bottom-color: ${theme.surface.border};
+      box-shadow: ${theme.surface.headerShadow};
+    `}
 `;
 
-export const TopActions = styled.div`
+export const BarInner = styled.div`
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+`;
+
+export const TopActions = styled.div<{ $ghost?: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;
+  ${({ $ghost, theme }) =>
+    $ghost &&
+    css`
+      > button,
+      > div > button {
+        color: ${theme.colors.white};
+        border-color: ${theme.surface.headerLine};
+      }
+    `}
 `;
 
 export const Brand = styled.p`
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
   font-weight: 700;
 `;
 
+export const BrandLogo = styled.img`
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex: none;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+`;
+
 export const Welcome = styled.section`
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  margin: calc(var(--header-h) * -1) 0 16px;
+  padding: calc(var(--header-h) + 20px) 0 28px;
+  border-radius: 0 0 32px 32px;
+  color: ${({ theme }) => theme.colors.white};
+  background: ${({ theme }) => theme.hero.background};
+  p { margin: 0; }
+`;
+
+export const WelcomeInner = styled.div`
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin: 16px 0;
-  padding: 20px 24px;
-  border-radius: 16px;
-  color: ${({ theme }) => theme.colors.white};
-  p { margin: 0; }
-  background: linear-gradient(
-    90deg,
-    ${({ theme }) => theme.colors.green900},
-    ${({ theme }) => theme.colors.green700}
-  );
+`;
+
+export const FogLayer = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
 `;
 
 export const WelcomeTitle = styled.h1`
@@ -58,7 +126,7 @@ export const Avatar = styled.div`
   display: grid;
   place-items: center;
   font-weight: 700;
-  background: ${({ theme }) => theme.colors.accent};
+  background: ${({ theme }) => theme.mark};
   color: ${({ theme }) => theme.colors.white};
   flex: none;
 `;
@@ -77,11 +145,28 @@ export const Tile = styled(Link)<{ $index: number }>`
   padding: 14px;
   border-radius: 16px;
   text-decoration: none;
-  color: ${({ theme }) => theme.colors.white};
-  background: ${({ $index, theme }) => theme.colors[tileTones[$index % tileTones.length]]};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  ${({ $index, theme }) =>
+    theme.mode === "dark"
+      ? css`
+          color: ${theme.colors.white};
+          background: ${theme.colors[tileTones[$index % tileTones.length]]};
+          border: 1.5px solid transparent;
+        `
+      : css`
+          color: ${theme.surface.text};
+          background: ${theme.surface.tile};
+          border: 1.5px solid ${theme.surface.border};
+          svg {
+            color: ${theme.surface.icon};
+          }
+          &:hover {
+            background: ${theme.surface.card};
+            border-color: ${theme.surface.cardBorder};
+          }
+        `}
 `;
 
 export const TileLabel = styled.span`
@@ -98,7 +183,7 @@ export const TileCount = styled.span`
 
 export const Card = styled.section`
   background: ${({ theme }) => theme.surface.card};
-  border: 2px solid ${({ theme }) => theme.surface.border};
+  border: 2px solid ${({ theme }) => theme.surface.cardBorder};
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 16px;
@@ -143,7 +228,7 @@ export const Badge = styled.span`
   margin-left: 6px;
   padding: 2px 8px;
   border-radius: 999px;
-  background: ${({ theme }) => theme.colors.accent};
+  background: ${({ theme }) => theme.mark};
   color: ${({ theme }) => theme.colors.white};
   font-size: 12px;
   font-weight: 700;
@@ -234,12 +319,61 @@ export const Button = styled.button<{ $tone?: "ok" | "danger" | "neutral"; $fill
   cursor: pointer;
 `;
 
+export const UserMenu = styled.div`
+  position: relative;
+`;
+
+export const UserMenuPanel = styled.div<{ $ghost?: boolean }>`
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  button {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  ${({ $ghost, theme }) =>
+    $ghost
+      ? css`
+          button {
+            color: ${theme.colors.white};
+            background: ${theme.surface.menuGlass};
+            border-color: ${theme.surface.menuGlassLine};
+            backdrop-filter: blur(14px) saturate(1.6);
+          }
+        `
+      : css`
+          button {
+            color: ${theme.surface.link};
+            background: ${theme.surface.page};
+            border-color: ${theme.surface.border};
+          }
+        `}
+`;
+
+export const MonthNav = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 12px;
+`;
+
 export const TextLink = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  vertical-align: middle;
+  line-height: 1;
   color: ${({ theme }) => theme.surface.link};
   font-weight: 600;
+  svg {
+    display: block;
+    flex: none;
+  }
 `;
 
 export const RowActions = styled.div`

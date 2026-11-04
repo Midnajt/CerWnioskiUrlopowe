@@ -15,14 +15,18 @@ Next.js App Router, React, TypeScript strict, styled-components. Produkt: `share
 - Early return dla loadingu, błędu i braku danych.
 - Bez `useMemo`, `useCallback` i `React.memo` na zapas.
 - Typy zamiast `any`. Semikolony.
-- Kolory i font tylko z `theme` (`theme.colors.*`, `theme.surface.*`, `theme.fonts.*`). Hex w komponencie jest błędem. `surface` tylko przestawia te same 12 próbek między jasnym i ciemnym motywem.
-- Układ pulpitu i formularza: `docs/specyfikacja_procesu_urlopy_20261103.md`. Pomarańcz i niebieski ze zrzutów SunCode nie wchodzą do theme.
+- Kolory i font tylko z `theme` (`theme.colors.*`, `theme.surface.*`, `theme.hero.*`, `theme.mark`, `theme.fonts.*`). Hex w komponencie jest błędem. Ciemny motyw przestawia 12 próbek. Jasny pulpit może mieć w `surface` biel strony `#FFFFFF`, szarość karty `#F3F4F6`, szarą kreskę `#DEE2E6` i niebieski `#0D6EFD`. Belka powitania używa `theme.hero`. Awatar i plakietka „NOWE” używają `theme.mark` (`#D92D59`).
+- Układ pulpitu i formularza: `docs/specyfikacja_procesu_urlopy_20261103.md` oraz przyjęty wygląd z `docs/plan_wdrozenia_20261103.md`. Pomarańcz i niebieski ze zrzutów SunCode nie wchodzą do theme. Niebieski jasnego pulpitu to `#0D6EFD`, nie kolor ze zrzutu. Belki powitania nie zamieniać na zielony gradient ani na pomarańcz.
 - Formularz wniosku: etykieta i pole, na wąskim ekranie pole pod etykietą.
 - Dane biorą się z Server Components albo z `/api`. W kliencie nie ma `@supabase/supabase-js` ani `@supabase/ssr`.
 
 ## Theme
 
-Dwanaście próbek, bez zmiany hexów. `ink` to prawie czerń. Zieleń od `green950` do `green500`. `teal800` i `teal500` to morski i turkus, `cyan` to jasny turkus. `cream` to jasny żółtozielony. `accent` to cegła. `white` to biel próbki.
+Dwanaście próbek w `colors`, bez zmiany ich hexów. `ink` to prawie czerń. Zieleń od `green950` do `green500`. `teal800` i `teal500` to morski i turkus, `cyan` to jasny turkus. `cream` to jasny żółtozielony. `accent` to cegła przycisków ostrzeżeń. `white` to biel próbki. Jasny pulpit dokłada w `surface` szarość i niebieski `#0D6EFD`. `theme.hero` to mgła belki. `theme.mark` to `#D92D59`. Ciemny motyw szarości, niebieskiego i tej mgły nie przebudowuje.
+
+## Pulpit
+
+Belka `Welcome` zaczyna się od góry ekranu, na pełną szerokość, z zaokrąglonym dołem. Ruchome tło rysuje `components/WelcomeFog.tsx` (Vanta FOG). Menu jest na belce: przezroczyste u góry, po przewinięciu sticky i mlecznobiałe. „Wyloguj” ma rozmiar przycisku z imieniem: szkło na belce, białe tło po przewinięciu. Karty są jasnoszare z niebieską obwódką, kafelki jak białe przyciski. Tego układu nie cofać.
 
 ```ts
 export const theme = {

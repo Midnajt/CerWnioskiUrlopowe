@@ -1,5 +1,5 @@
 import { CardHeading, Glyph } from "@/components/glyphs";
-import { Card, DayCell, MonthGrid, TextLink } from "@/components/ui";
+import { Card, DayCell, MonthGrid, MonthNav, TextLink } from "@/components/ui";
 import { RequestTable } from "@/components/RequestTable";
 import { requireEmployee } from "@/lib/auth/session";
 import { addUtcDays, formatIsoDate, nextMonth, parseIsoDate, previousMonth, todayInWarsaw } from "@/lib/leave/dates";
@@ -39,18 +39,18 @@ export default async function CalendarPage({ searchParams }: Props) {
   return (
     <Card>
       <CardHeading name="calendar">Kalendarz — {data.label}</CardHeading>
-      <p>
+      <MonthNav>
         {prev ? (
           <TextLink href={`/kalendarz?month=${prev}`}>
             <Glyph name="prev" /> Poprzedni
           </TextLink>
-        ) : null}{" "}
+        ) : null}
         {next ? (
           <TextLink href={`/kalendarz?month=${next}`}>
             Następny <Glyph name="next" />
           </TextLink>
         ) : null}
-      </p>
+      </MonthNav>
       <MonthGrid>
         {["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"].map((day) => (
           <strong key={day}>{day}</strong>
